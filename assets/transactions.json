@@ -1,0 +1,174 @@
+{
+  "transactions": [
+    {
+      "id": "txn001",
+      "date": "2025-03-01T08:30:00Z",
+      "category": "Food",
+      "amount": 12.50,
+      "type": "expense",
+      "carbon_footprint": 1.5,
+      "description": "Breakfast at Starbucks"
+    },
+    {
+      "id": "txn002",
+      "date": "2025-03-02T12:15:00Z",
+      "category": "Transport",
+      "amount": 8.00,
+      "type": "expense",
+      "carbon_footprint": 3.0,
+      "description": "Bus fare"
+    },
+    {
+      "id": "txn003",
+      "date": "2025-03-03T15:45:00Z",
+      "category": "Shopping",
+      "amount": 120.00,
+      "type": "expense",
+      "description": "Bought new sneakers"
+    },
+    {
+      "id": "txn004",
+      "date": "2025-03-05T18:00:00Z",
+      "category": "Salary",
+      "amount": 3000.00,
+      "type": "income",
+      "description": "March salary"
+    },
+    {
+      "id": "txn005",
+      "date": "2025-03-05T19:30:00Z",
+      "category": "Food",
+      "amount": 18.00,
+      "type": "expense",
+      "carbon_footprint": 2.0,
+      "description": "Dinner at a restaurant"
+    },
+    {
+      "id": "txn006",
+      "date": "2025-03-05T21:00:00Z",
+      "category": "Transport",
+      "amount": 15.00,
+      "type": "expense",
+      "carbon_footprint": 4.5,
+      "description": "Grab ride to meeting"
+    },
+    {
+      "id": "txn007",
+      "date": "2025-03-08T10:00:00Z",
+      "category": "Utilities",
+      "amount": 200.00,
+      "type": "expense",
+      "description": "Electricity bill"
+    },
+    {
+      "id": "txn008",
+      "date": "2025-03-09T22:00:00Z",
+      "category": "Entertainment",
+      "amount": 30.00,
+      "type": "expense",
+      "description": "Netflix subscription"
+    },
+    {
+      "id": "txn009",
+      "date": "2025-03-10T14:00:00Z",
+      "category": "Freelance",
+      "amount": 500.00,
+      "type": "income",
+      "description": "Freelance website project"
+    },
+    {
+      "id": "txn010",
+      "date": "2025-03-11T12:30:00Z",
+      "category": "Food",
+      "amount": 10.00,
+      "type": "expense",
+      "carbon_footprint": 1.2,
+      "description": "Lunch at food court"
+    },
+    {
+      "id": "txn011",
+      "date": "2025-03-11T17:45:00Z",
+      "category": "Transport",
+      "amount": 12.00,
+      "type": "expense",
+      "carbon_footprint": 3.8,
+      "description": "Train ticket"
+    },
+    {
+      "id": "txn012",
+      "date": "2025-03-13T19:20:00Z",
+      "category": "Shopping",
+      "amount": 250.00,
+      "type": "expense",
+      "description": "New headphones"
+    },
+    {
+      "id": "txn013",
+      "date": "2025-03-15T20:00:00Z",
+      "category": "Food",
+      "amount": 22.00,
+      "type": "expense",
+      "carbon_footprint": 2.5,
+      "description": "Fine dining dinner"
+    },
+    {
+      "id": "txn014",
+      "date": "2025-03-16T23:15:00Z",
+      "category": "Transport",
+      "amount": 10.00,
+      "type": "expense",
+      "carbon_footprint": 2.8,
+      "description": "Taxi ride home"
+    },
+    {
+      "id": "txn015",
+      "date": "2025-03-17T18:30:00Z",
+      "category": "Entertainment",
+      "amount": 50.00,
+      "type": "expense",
+      "description": "Concert ticket"
+    },
+    {
+      "id": "txn016",
+      "date": "2025-03-19T09:45:00Z",
+      "category": "Utilities",
+      "amount": 150.00,
+      "type": "expense",
+      "description": "Internet bill"
+    },
+    {
+      "id": "txn017",
+      "date": "2025-03-21T13:20:00Z",
+      "category": "Food",
+      "amount": 9.50,
+      "type": "expense",
+      "carbon_footprint": 1.0,
+      "description": "Fast food meal"
+    },
+    {
+      "id": "txn018",
+      "date": "2025-03-22T11:50:00Z",
+      "category": "Shopping",
+      "amount": 180.00,
+      "type": "expense",
+      "description": "Bought a new jacket"
+    },
+    {
+      "id": "txn019",
+      "date": "2025-03-25T16:10:00Z",
+      "category": "Freelance",
+      "amount": 700.00,
+      "type": "income",
+      "description": "Freelance UI design job"
+    },
+    {
+      "id": "txn020",
+      "date": "2025-03-28T10:40:00Z",
+      "category": "Food",
+      "amount": 15.00,
+      "type": "expense",
+      "carbon_footprint": 1.8,
+      "description": "Brunch at a café"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "507877404602",
+    "project_id": "kitahacksteadypunpipi-924f3",
+    "storage_bucket": "kitahacksteadypunpipi-924f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:507877404602:android:b353b2558f8369cd20b783",
+        "android_client_info": {
+          "package_name": "com.example.steadypunpipi_vhack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCb0tDM-suqnZCg4WPwdQYv4Mil5oa1uCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
