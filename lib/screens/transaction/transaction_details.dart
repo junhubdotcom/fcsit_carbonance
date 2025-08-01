@@ -82,13 +82,13 @@ class _TransactionDetailsState extends State<TransactionDetails> {
     return totalCost;
   }
 
-  double calculateTotalCarbonFootprint() {
-    double totalCarbonFootprint = 0;
-    for (int i = 0; i < expenseItems.length; i++) {
-      totalCarbonFootprint += expenseItems[i].carbon_footprint;
-    }
-    return totalCarbonFootprint;
-  }
+  // double calculateTotalCarbonFootprint() {
+  //   double totalCarbonFootprint = 0;
+  //   for (int i = 0; i < expenseItems.length; i++) {
+  //     totalCarbonFootprint += expenseItems[i].carbon_footprint;
+  //   }
+  //   return totalCarbonFootprint;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +169,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                                                             0.04))),
                                         widget.isExpense
                                             ? Text(
-                                                '+${calculateTotalCarbonFootprint().toStringAsFixed(2)}kg C02e',
+                                                '+${transaction.carbonFootprint.toStringAsFixed(2)}kg C02e',
                                                 style: GoogleFonts.quicksand(
                                                   textStyle: TextStyle(
                                                       fontWeight:

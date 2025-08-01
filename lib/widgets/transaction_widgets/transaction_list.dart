@@ -45,7 +45,6 @@ class _buildTransactionDay extends StatefulWidget {
   final DateTime date;
 
   const _buildTransactionDay({
-    super.key,
     required this.date,
   });
 
@@ -155,38 +154,6 @@ class _buildTransactionDayState extends State<_buildTransactionDay> {
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final Expense currentExpense = transactionList[index];
-                        // // Immediately execute an async function to fetch the item name
-                        // (() async {
-                        //   if (currentExpense.items != null &&
-                        //       currentExpense.items.isNotEmpty) {
-                        //     DocumentReference<ExpenseItem> itemRef =
-                        //         currentExpense.items[0];
-                        //     try {
-                        //       DocumentSnapshot<ExpenseItem> itemSnapshot =
-                        //           await itemRef.get();
-                        //       if (itemSnapshot.exists &&
-                        //           itemSnapshot.data() != null) {
-                        //         ExpenseItem? itemData = itemSnapshot.data();
-                        //         if (itemData?.name != null) {
-                        //           setState(() {
-                        //             itemName = itemData?.name ?? 'No Name';
-                        //           });
-                        //         }
-                        //       }
-                        //     } catch (e) {
-                        //       print(
-                        //           "Error fetching item name (${itemRef.id}): $e");
-                        //       if (mounted) {
-                        //         setState(() {
-                        //           itemName = 'Error Loading Name';
-                        //         });
-                        //       }
-                        //     }
-                        //   } else {
-                        //     itemName = 'No Items';
-                        //   }
-                        // })();
-
                         return TransactionContainer(
                           transactionId: currentExpense.id ?? "",
                         );

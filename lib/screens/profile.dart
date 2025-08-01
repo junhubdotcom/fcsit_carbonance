@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:steadypunpipi_vhack/common/constants.dart';
 import 'package:steadypunpipi_vhack/common/userdata.dart';
+import 'package:steadypunpipi_vhack/screens/connected_accounts_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -25,6 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildStatsSection(),
               _buildSettingsSection(),
               _buildActivitySection(),
+              SizedBox(height: AppConstants.paddingLarge), // Add bottom spacing
             ],
           ),
         ),
@@ -34,19 +36,25 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildProfileHeader() {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.6,
+      width: MediaQuery.of(context).size.width * 0.65,
+      margin: EdgeInsets.symmetric(
+        horizontal: AppConstants.paddingMedium,
+        vertical: AppConstants.paddingSmall,
+      ),
+      constraints: BoxConstraints(
+        minHeight: 280, // Ensure minimum height for proper display
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: AppConstants.paddingMedium,
         vertical: AppConstants.paddingLarge,
       ),
       decoration: BoxDecoration(
         color: Color(0xFFDCE8D6),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(AppConstants.borderRadiusMedium),
-          bottomRight: Radius.circular(AppConstants.borderRadiusMedium),
-        ),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadiusMedium),
+        boxShadow: [AppConstants.boxShadow],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           // Profile Picture
           Container(
@@ -70,6 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
+            textAlign: TextAlign.center,
           ),
           SizedBox(height: AppConstants.paddingSmall),
 
@@ -80,6 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
               fontSize: AppConstants.fontSizeMedium,
               color: Colors.black,
             ),
+            textAlign: TextAlign.center,
           ),
           SizedBox(height: AppConstants.paddingMedium),
 
@@ -241,6 +251,14 @@ class _ProfilePageState extends State<ProfilePage> {
             title: 'Account Settings',
             subtitle: 'Personal information, email',
             iconColor: AppConstants.primaryColor,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ConnectedAccountsPage(),
+                ),
+              );
+            },
           ),
           _buildDivider(),
           _buildSettingItem(
@@ -273,6 +291,7 @@ class _ProfilePageState extends State<ProfilePage> {
     required String title,
     required String subtitle,
     required Color iconColor,
+    VoidCallback? onTap,
   }) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
@@ -304,7 +323,7 @@ class _ProfilePageState extends State<ProfilePage> {
         size: 16,
         color: AppConstants.textSecondary,
       ),
-      onTap: () {},
+      onTap: onTap ?? () {},
     );
   }
 

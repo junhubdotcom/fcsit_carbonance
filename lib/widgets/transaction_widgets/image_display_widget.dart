@@ -17,7 +17,7 @@ class ImageDisplayWidget extends StatelessWidget {
           ? ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Image.file(
-                File(imgPath!),
+                File(imgPath),
                 height: 100,
                 width: 100,
                 fit: BoxFit.cover,

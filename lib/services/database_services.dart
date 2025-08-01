@@ -5,9 +5,9 @@ import 'package:steadypunpipi_vhack/models/income.dart';
 // import 'package:steadypunpipi_vhack/models/expensealt.dart';
 // import 'package:steadypunpipi_vhack/models/expense_itemalt.dart';
 
-const String EXPENSE_COLLECTION_REF = "test";
-const String INCOME_COLLECTION_REF = "testIncome";
-const String EXPENSE_ITEM_COLLECTION_REF = "testItem";
+const String EXPENSE_COLLECTION_REF = "expense";
+const String INCOME_COLLECTION_REF = "expenseIncome";
+const String EXPENSE_ITEM_COLLECTION_REF = "expenseItem";
 
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
