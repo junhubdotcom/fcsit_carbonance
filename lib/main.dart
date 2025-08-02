@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: Colors.green.shade400,
           child: Icon(
-            Icons.pets,
+            Icons.energy_savings_leaf,
             color: Color(0XFFE5ECDD),
             size: 30,
           ),
