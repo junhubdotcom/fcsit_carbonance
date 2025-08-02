@@ -24,9 +24,9 @@ class TransactionModel {
       date: DateTime.parse(map['date']),
       category: map['category'],
       amount: (map['amount'] as num).toDouble(),
-      type: map['type'],
-      carbonFootprint: map['carbon_footprint'] != null
-          ? (map['carbon_footprint'] as num).toDouble()
+      type: map['type'] ?? 'expense', // Default type
+      carbonFootprint: map['carbonFootprint'] != null
+          ? (map['carbonFootprint'] as num).toDouble()
           : null,
       description: map['description'],
     );
@@ -40,7 +40,7 @@ class TransactionModel {
       'category': category,
       'amount': amount,
       'type': type,
-      'carbon_footprint': carbonFootprint,
+      'carbonFootprint': carbonFootprint,
       'description': description,
     };
   }

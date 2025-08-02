@@ -2,15 +2,51 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:steadypunpipi_vhack/models/expense.dart';
 import 'package:steadypunpipi_vhack/models/expense_item.dart';
 import 'package:steadypunpipi_vhack/models/income.dart';
-// import 'package:steadypunpipi_vhack/models/expensealt.dart';
-// import 'package:steadypunpipi_vhack/models/expense_itemalt.dart';
 
-const String EXPENSE_COLLECTION_REF = "test";
-const String INCOME_COLLECTION_REF = "testIncome";
-const String EXPENSE_ITEM_COLLECTION_REF = "testItem";
+class FirestoreCollections {
+  // Main Data Collections (Matching Firebase Functions)
+  static const String EXPENSES = "Expense";
+  static const String INCOMES = "Income";
+  static const String EXPENSE_ITEMS = "ExpenseItem";
+
+  // AI & Insights Collections (Matching Production)
+  static const String CONNECT_EARTH_INSIGHTS = "ConnectEarthInsights";
+  static const String INSIGHTS_SUMMARY = "InsightsSummary";
+
+  // Green Credit & Loan Collections
+  static const String GREEN_CREDITS = "GreenCredits";
+  static const String GREEN_LOANS = "GreenLoans";
+
+  // Unified Reward System Collections
+  static const String UNIFIED_REWARDS = "UnifiedRewards";
+  static const String REWARD_REDEMPTIONS = "RewardRedemptions";
+
+  // Activity Carbon Collections
+  static const String ACTIVITY_CARBON = "ActivityCarbon";
+
+  // Income Collections
+  static const String INCOME = "Income";
+
+  // System Collections
+  static const String TRIGGERS = "Triggers";
+}
+
+// Legacy collection names (for backward compatibility)
+const String EXPENSE_COLLECTION_REF = FirestoreCollections.EXPENSES;
+const String INCOME_COLLECTION_REF = FirestoreCollections.INCOMES;
+const String EXPENSE_ITEM_COLLECTION_REF = FirestoreCollections.EXPENSE_ITEMS;
 
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  /// Generate a datetime-based document name for better tracking
+  String _generateDocumentName(String prefix, DateTime dateTime) {
+    final formattedDate =
+        "${dateTime.year}${dateTime.month.toString().padLeft(2, '0')}${dateTime.day.toString().padLeft(2, '0')}";
+    final formattedTime =
+        "${dateTime.hour.toString().padLeft(2, '0')}${dateTime.minute.toString().padLeft(2, '0')}";
+    return "${prefix}_${formattedDate}${formattedTime}";
+  }
 
   CollectionReference<Expense> get expensesCollection =>
       _firestore.collection(EXPENSE_COLLECTION_REF).withConverter<Expense>(
@@ -76,7 +112,20 @@ class DatabaseService {
   }
 
   Future<DocumentReference<Expense>> addExpense(Expense expense) async {
-    return await expensesCollection.add(expense);
+    try {
+      final now = DateTime.now();
+      final documentName = _generateDocumentName("expense", now);
+
+      await expensesCollection.doc(documentName).set(expense);
+
+      print("✅ Expense saved at: ${expensesCollection.doc(documentName).path}");
+      print("📄 Document: $documentName");
+
+      return expensesCollection.doc(documentName);
+    } catch (e) {
+      print("❌ Error saving expense: $e");
+      rethrow;
+    }
   }
 
   Future<void> updateExpense(String expenseId, Expense expense) async {
@@ -94,7 +143,20 @@ class DatabaseService {
 
   //Income
   Future<DocumentReference<Income>> addIncome(Income income) async {
-    return await incomesCollection.add(income);
+    try {
+      final now = DateTime.now();
+      final documentName = _generateDocumentName("income", now);
+
+      await incomesCollection.doc(documentName).set(income);
+
+      print("✅ Income saved at: ${incomesCollection.doc(documentName).path}");
+      print("📄 Document: $documentName");
+
+      return incomesCollection.doc(documentName);
+    } catch (e) {
+      print("❌ Error saving income: $e");
+      rethrow;
+    }
   }
 
   Future<void> updateIncome(String incomeId, Income income) async {
@@ -113,7 +175,21 @@ class DatabaseService {
   //Expense Item
   Future<DocumentReference<ExpenseItem>> addExpenseItem(
       ExpenseItem expenseItem) async {
-    return await expenseItemsCollection.add(expenseItem);
+    try {
+      final now = DateTime.now();
+      final documentName = _generateDocumentName("item", now);
+
+      await expenseItemsCollection.doc(documentName).set(expenseItem);
+
+      print(
+          "✅ Expense item saved at: ${expenseItemsCollection.doc(documentName).path}");
+      print("📄 Document: $documentName");
+
+      return expenseItemsCollection.doc(documentName);
+    } catch (e) {
+      print("❌ Error saving expense item: $e");
+      rethrow;
+    }
   }
 
   Future<ExpenseItem?> getExpenseItem(String expenseItemId) async {

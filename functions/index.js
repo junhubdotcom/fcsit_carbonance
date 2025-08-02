@@ -4,12 +4,18 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import axios from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config();
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  console.error('❌ ERROR: GEMINI_API_KEY not found in environment variables!');
+}
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
+
 
 initializeApp();
 const db = getFirestore();
-
-const GEMINI_API_KEY = 'AIzaSyCIWb3At_0Q-QyZccNX0zlujY8KVCYc2ns';
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=${GEMINI_API_KEY}`;
 
 // ==================== Utility Functions ====================
 
@@ -338,6 +344,8 @@ export const generateMonthlyInsights = onSchedule('0 16 * * *', async () => {
   const id = getDateId('monthly', start);
   await writeInsights(id, insights);
 });
+
+
 
 // ==================== Manual Insight Generation Triggers for Debugging ====================
 export const manualInsightTrigger = onDocumentWritten('Triggers/force-insight-generation', async (event) => {

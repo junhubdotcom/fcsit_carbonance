@@ -1,0 +1,297 @@
+{
+    "transactions": [
+        {
+            "id": "1",
+            "date": "2024-06-01",
+            "amount": 45.50,
+            "category": "Food",
+            "description": "Grocery shopping",
+            "carbonFootprint": 2.3
+        },
+        {
+            "id": "2",
+            "date": "2024-06-03",
+            "amount": 25.00,
+            "category": "Transport",
+            "description": "Fuel",
+            "carbonFootprint": 8.5
+        },
+        {
+            "id": "3",
+            "date": "2024-06-05",
+            "amount": 120.00,
+            "category": "Shopping",
+            "description": "Clothing",
+            "carbonFootprint": 3.2
+        },
+        {
+            "id": "4",
+            "date": "2024-06-08",
+            "amount": 35.00,
+            "category": "Food",
+            "description": "Restaurant",
+            "carbonFootprint": 4.1
+        },
+        {
+            "id": "5",
+            "date": "2024-06-10",
+            "amount": 15.00,
+            "category": "Transport",
+            "description": "Public transport",
+            "carbonFootprint": 1.2
+        },
+        {
+            "id": "6",
+            "date": "2024-06-12",
+            "amount": 80.00,
+            "category": "Entertainment",
+            "description": "Movie tickets",
+            "carbonFootprint": 0.8
+        },
+        {
+            "id": "7",
+            "date": "2024-06-15",
+            "amount": 60.00,
+            "category": "Food",
+            "description": "Grocery shopping",
+            "carbonFootprint": 3.0
+        },
+        {
+            "id": "8",
+            "date": "2024-06-18",
+            "amount": 30.00,
+            "category": "Transport",
+            "description": "Fuel",
+            "carbonFootprint": 10.2
+        },
+        {
+            "id": "9",
+            "date": "2024-06-20",
+            "amount": 150.00,
+            "category": "Shopping",
+            "description": "Electronics",
+            "carbonFootprint": 12.5
+        },
+        {
+            "id": "10",
+            "date": "2024-06-25",
+            "amount": 40.00,
+            "category": "Food",
+            "description": "Restaurant",
+            "carbonFootprint": 4.8
+        },
+        {
+            "id": "11",
+            "date": "2024-07-01",
+            "amount": 50.00,
+            "category": "Food",
+            "description": "Grocery shopping",
+            "carbonFootprint": 2.5
+        },
+        {
+            "id": "12",
+            "date": "2024-07-03",
+            "amount": 20.00,
+            "category": "Transport",
+            "description": "Public transport",
+            "carbonFootprint": 1.5
+        },
+        {
+            "id": "13",
+            "date": "2024-07-05",
+            "amount": 90.00,
+            "category": "Shopping",
+            "description": "Home goods",
+            "carbonFootprint": 4.2
+        },
+        {
+            "id": "14",
+            "date": "2024-07-08",
+            "amount": 30.00,
+            "category": "Food",
+            "description": "Restaurant",
+            "carbonFootprint": 3.6
+        },
+        {
+            "id": "15",
+            "date": "2024-07-10",
+            "amount": 25.00,
+            "category": "Transport",
+            "description": "Fuel",
+            "carbonFootprint": 8.8
+        },
+        {
+            "id": "16",
+            "date": "2024-07-12",
+            "amount": 70.00,
+            "category": "Entertainment",
+            "description": "Concert tickets",
+            "carbonFootprint": 1.2
+        },
+        {
+            "id": "17",
+            "date": "2024-07-15",
+            "amount": 55.00,
+            "category": "Food",
+            "description": "Grocery shopping",
+            "carbonFootprint": 2.8
+        },
+        {
+            "id": "18",
+            "date": "2024-07-18",
+            "amount": 35.00,
+            "category": "Transport",
+            "description": "Fuel",
+            "carbonFootprint": 11.5
+        },
+        {
+            "id": "19",
+            "date": "2024-07-20",
+            "amount": 110.00,
+            "category": "Shopping",
+            "description": "Clothing",
+            "carbonFootprint": 2.9
+        },
+        {
+            "id": "20",
+            "date": "2024-07-25",
+            "amount": 45.00,
+            "category": "Food",
+            "description": "Restaurant",
+            "carbonFootprint": 5.2
+        },
+        {
+            "id": "21",
+            "date": "2024-08-01",
+            "amount": 40.00,
+            "category": "Food",
+            "description": "Grocery shopping",
+            "carbonFootprint": 2.0
+        },
+        {
+            "id": "22",
+            "date": "2024-08-03",
+            "amount": 15.00,
+            "category": "Transport",
+            "description": "Public transport",
+            "carbonFootprint": 1.0
+        },
+        {
+            "id": "23",
+            "date": "2024-08-05",
+            "amount": 75.00,
+            "category": "Shopping",
+            "description": "Books",
+            "carbonFootprint": 1.8
+        },
+        {
+            "id": "24",
+            "date": "2024-08-08",
+            "amount": 35.00,
+            "category": "Food",
+            "description": "Restaurant",
+            "carbonFootprint": 4.0
+        },
+        {
+            "id": "25",
+            "date": "2024-08-10",
+            "amount": 30.00,
+            "category": "Transport",
+            "description": "Fuel",
+            "carbonFootprint": 9.5
+        },
+        {
+            "id": "26",
+            "date": "2024-08-12",
+            "amount": 60.00,
+            "category": "Entertainment",
+            "description": "Sports event",
+            "carbonFootprint": 0.9
+        },
+        {
+            "id": "27",
+            "date": "2024-08-15",
+            "amount": 50.00,
+            "category": "Food",
+            "description": "Grocery shopping",
+            "carbonFootprint": 2.5
+        },
+        {
+            "id": "28",
+            "date": "2024-08-18",
+            "amount": 20.00,
+            "category": "Transport",
+            "description": "Public transport",
+            "carbonFootprint": 1.3
+        },
+        {
+            "id": "29",
+            "date": "2024-08-20",
+            "amount": 95.00,
+            "category": "Shopping",
+            "description": "Electronics",
+            "carbonFootprint": 8.2
+        },
+        {
+            "id": "30",
+            "date": "2024-08-25",
+            "amount": 40.00,
+            "category": "Food",
+            "description": "Restaurant",
+            "carbonFootprint": 4.5
+        }
+    ],
+    "insights": {
+        "daily": {
+            "spending": [
+                "Today's spending is 15% below your daily average",
+                "Consider walking instead of driving to reduce carbon footprint",
+                "You're on track with your daily budget"
+            ],
+            "carbon": [
+                "Your carbon footprint today is 2.3kg CO2",
+                "This is 20% below your daily average",
+                "Great job choosing sustainable transport options"
+            ],
+            "trends": [
+                "Spending trend shows a 10% decrease from yesterday",
+                "Carbon emissions reduced by 15% this week",
+                "You're making progress towards your sustainability goals"
+            ]
+        },
+        "weekly": {
+            "spending": [
+                "Weekly spending is $320, 12% below budget",
+                "Food category is your highest expense this week",
+                "Consider meal planning to reduce food costs"
+            ],
+            "carbon": [
+                "Weekly carbon footprint: 18.5kg CO2",
+                "Transport contributes 45% to your carbon footprint",
+                "You've saved 3.2kg CO2 by using public transport"
+            ],
+            "trends": [
+                "Spending decreased by 8% compared to last week",
+                "Carbon emissions down 12% from last week",
+                "You're trending towards more sustainable choices"
+            ]
+        },
+        "monthly": {
+            "spending": [
+                "Monthly spending: $1,250, within budget",
+                "Shopping category increased by 15% this month",
+                "Consider reviewing subscription services"
+            ],
+            "carbon": [
+                "Monthly carbon footprint: 75.2kg CO2",
+                "You're 18% below the average monthly carbon footprint",
+                "Transport and food are your main carbon contributors"
+            ],
+            "trends": [
+                "Monthly spending trend shows 5% decrease",
+                "Carbon footprint reduced by 22% this month",
+                "You're making excellent progress on sustainability"
+            ]
+        }
+    }
+}

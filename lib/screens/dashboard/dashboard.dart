@@ -6,6 +6,8 @@ import 'package:steadypunpipi_vhack/common/constants.dart';
 import 'package:steadypunpipi_vhack/models/finance_data.dart';
 import 'package:steadypunpipi_vhack/models/transaction_model.dart';
 import 'package:steadypunpipi_vhack/services/transaction_service.dart';
+import 'package:steadypunpipi_vhack/services/database_services.dart';
+import 'package:steadypunpipi_vhack/services/firestore_collection_checker.dart';
 
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/dashboard_settings.dart';
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/date_selector.dart';
@@ -14,6 +16,9 @@ import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/loading.dart';
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/summary_section.dart';
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/tips_section.dart';
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/trend_section.dart';
+import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/connect_earth_insights_widget.dart';
+import 'package:steadypunpipi_vhack/screens/green_credit/green_credit_dashboard.dart';
+import 'package:steadypunpipi_vhack/screens/dashboard/new_dashboard.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -34,12 +39,21 @@ class _DashboardPageState extends State<DashboardPage> {
 
   bool isLoadingAI = false;
 
-  List<String> sectionOrder = ["Summary", "Breakdown", "Trend", "Tips"];
+  List<String> sectionOrder = [
+    "Summary",
+    "Breakdown",
+    "Trend",
+    "Tips",
+    "ConnectEarth",
+    "GreenCredit",
+  ];
   Map<String, bool> sectionVisibility = {
     "Summary": true,
     "Breakdown": true,
     "Trend": true,
     "Tips": true,
+    "ConnectEarth": true,
+    "GreenCredit": true,
   };
 
   DateTime _selectedDate = DateTime.now();
@@ -98,7 +112,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
     try {
       final snapshot = await FirebaseFirestore.instance
-          .collection('InsightsSummary')
+          .collection(FirestoreCollections.INSIGHTS_SUMMARY)
           .doc(id)
           .get();
 
@@ -180,6 +194,26 @@ class _DashboardPageState extends State<DashboardPage> {
         centerTitle: true,
         actions: [
           IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NewDashboard(),
+                ),
+              );
+            },
+            icon: Icon(Icons.dashboard_customize),
+            tooltip: 'New Dashboard',
+          ),
+          IconButton(
+            onPressed: () async {
+              final checker = FirestoreCollectionChecker();
+              await checker.analyzeCollections();
+            },
+            icon: Icon(Icons.analytics),
+            tooltip: 'Check Firestore Collections',
+          ),
+          IconButton(
             onPressed: () {},
             icon: Icon(Icons.share),
           ),
@@ -225,11 +259,94 @@ class _DashboardPageState extends State<DashboardPage> {
                           environmentTips: List<String>.from(
                               geminiData["environmentTips"] ?? []),
                         );
+                case "ConnectEarth":
+                  return ConnectEarthInsightsWidget(
+                    transactions: transactions,
+                    periodId: getInsightId(
+                        getSelectedPeriod().toLowerCase(), _selectedDate),
+                    userId:
+                        "user_${DateTime.now().millisecondsSinceEpoch}", // You can replace this with actual user ID
+                  );
+                case "GreenCredit":
+                  return _buildGreenCreditSection();
+                // case "ModernDashboard":
+                //   return _buildModernDashboardSection();
                 default:
                   return SizedBox.shrink();
               }
             }).toList(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGreenCreditSection() {
+    return Container(
+      margin: EdgeInsets.only(top: 16),
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GreenCreditDashboard(),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.green[100],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.eco,
+                    color: Colors.green[600],
+                    size: 24,
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Green Credit',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.green[700],
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Track your sustainability score and earn green credits',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.grey[400],
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

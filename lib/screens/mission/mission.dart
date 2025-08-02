@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:steadypunpipi_vhack/screens/mission/mission_tab1.dart';
-import 'package:steadypunpipi_vhack/screens/mission/mission_tab2.dart';
-import 'package:steadypunpipi_vhack/screens/mission/mission_tab3.dart';
+import 'package:steadypunpipi_vhack/screens/mission/rewards_and_loans_tab.dart';
 
 class MissionPage extends StatelessWidget {
   const MissionPage({super.key});
@@ -10,7 +9,7 @@ class MissionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2, // Reduced from 3 to 2
       child: Scaffold(
         appBar: AppBar(
           title: Text(
@@ -26,10 +25,7 @@ class MissionPage extends StatelessWidget {
                 child: Text('Missions',
                     style: TextStyle(fontWeight: FontWeight.normal))),
             Tab(
-                child: Text('Redeem',
-                    style: TextStyle(fontWeight: FontWeight.normal))),
-            Tab(
-                child: Text('Rewards',
+                child: Text('Rewards & Loans',
                     style: TextStyle(fontWeight: FontWeight.normal))),
           ]),
         ),
@@ -47,8 +43,7 @@ class MissionPage extends StatelessWidget {
                 ),
               ),
             ),
-            MissionTab2(),
-            MissionTab3(),
+            RewardsAndLoansTab(), // NEW: Combined tab
           ],
         ),
       ),

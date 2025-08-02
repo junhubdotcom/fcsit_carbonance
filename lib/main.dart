@@ -7,9 +7,19 @@ import 'route.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Load dotenv
+  try {
+    await dotenv.load(fileName: ".env");
+    print('✅ DEBUG: .env file loaded successfully');
+  } catch (e) {
+    print('⚠️ DEBUG: .env file not found, using default values');
+  }
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -96,7 +106,7 @@ class _MainScreenState extends State<MainScreen> {
             IconButton(
               icon: Icon(
                 Icons.dashboard,
-                color:_currentIndex == 1 ? Colors.black : Colors.grey.shade600,
+                color: _currentIndex == 1 ? Colors.black : Colors.grey.shade600,
               ),
               onPressed: () {
                 _onTabTapped(1); // Navigate to the DashboardPage

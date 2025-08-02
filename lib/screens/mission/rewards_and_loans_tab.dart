@@ -2,55 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:steadypunpipi_vhack/common/userdata.dart';
 
-class MissionTab2 extends StatefulWidget {
-  const MissionTab2({super.key});
+class RewardsAndLoansTab extends StatefulWidget {
+  const RewardsAndLoansTab({super.key});
 
   @override
-  State<MissionTab2> createState() => _MissionTab2State();
+  State<RewardsAndLoansTab> createState() => _RewardsAndLoansTabState();
 }
 
-class _MissionTab2State extends State<MissionTab2> {
+class _RewardsAndLoansTabState extends State<RewardsAndLoansTab> {
   final UserData _userData = UserData();
   bool showBookmarkedOnly = false;
   String searchQuery = "";
   late List<RewardItem> rewards;
-  late List<LoanItem> loans; // NEW: Add loans list
+  late List<LoanItem> loans;
+  late List<RewardItem> purchasedRewards;
 
   @override
   void initState() {
     super.initState();
     rewards = [
       RewardItem(
-          0,
-          "10% Google Cloud",
-          "Discount voucher",
-          "1000 points",
-          Image.asset("assets/images/google.png", width: 45, height: 45),
-          Colors.green[100]!),
+        0,
+        "10% Google Cloud",
+        "Discount voucher",
+        "1000 points",
+        Image.asset("assets/images/google.png", width: 45, height: 45),
+        Colors.green[100]!,
+      ),
       RewardItem(
-          1,
-          "WWF",
-          "Donation",
-          "150 points",
-          Image.asset("assets/images/wwf.png", width: 45, height: 45),
-          Colors.blueGrey[100]!),
+        1,
+        "WWF",
+        "Donation",
+        "150 points",
+        Image.asset("assets/images/wwf.png", width: 45, height: 45),
+        Colors.blueGrey[100]!,
+      ),
       RewardItem(
-          2,
-          "10% Google Cloud",
-          "Discount voucher",
-          "1000 points",
-          Image.asset("assets/images/google.png", width: 45, height: 45),
-          Colors.green[100]!),
+        2,
+        "10% Google Cloud",
+        "Discount voucher",
+        "1000 points",
+        Image.asset("assets/images/google.png", width: 45, height: 45),
+        Colors.green[100]!,
+      ),
       RewardItem(
-          3,
-          "WWF",
-          "Donation",
-          "150 points",
-          Image.asset("assets/images/wwf.png", width: 45, height: 45),
-          Colors.blueGrey[100]!),
+        3,
+        "WWF",
+        "Donation",
+        "150 points",
+        Image.asset("assets/images/wwf.png", width: 45, height: 45),
+        Colors.blueGrey[100]!,
+      ),
     ];
 
-    // NEW: Initialize loans
+    // Initialize loans
     loans = [
       LoanItem(
         0,
@@ -89,6 +94,34 @@ class _MissionTab2State extends State<MissionTab2> {
         requiredPoints: 5000,
       ),
     ];
+
+    // Initialize purchased rewards (demo data)
+    purchasedRewards = [
+      RewardItem(
+        0,
+        "10% Google Cloud",
+        "Discount voucher",
+        "1000 points",
+        Image.asset("assets/images/gcloud.png", width: 45, height: 45),
+        Colors.green[100]!,
+      ),
+      RewardItem(
+        1,
+        "10% Google Cloud",
+        "Discount voucher",
+        "1000 points",
+        Image.asset("assets/images/gcloud.png", width: 45, height: 45),
+        Colors.blue[100]!,
+      ),
+      RewardItem(
+        2,
+        "10% Google Cloud",
+        "Discount voucher",
+        "1000 points",
+        Image.asset("assets/images/gcloud.png", width: 45, height: 45),
+        Colors.purple[100]!,
+      ),
+    ];
   }
 
   @override
@@ -99,24 +132,38 @@ class _MissionTab2State extends State<MissionTab2> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: _buildHeader(),
-            ),
+            // Header with points
+            _buildHeader(),
             SizedBox(height: 16),
+
+            // Search and filter
             _buildSearchBar(),
             _buildFilterRow(),
-
-            // Rewards Section
-            _buildSectionHeader("Rewards & Discounts", Icons.card_giftcard),
-            SizedBox(height: 8),
-            _buildRewardsList(),
-
             SizedBox(height: 24),
 
-            // Loans Section - More prominent
+            // Available Rewards Section
+            _buildSectionHeader("Available Rewards", Icons.card_giftcard),
+            SizedBox(height: 12),
+            _buildAvailableRewards(),
+            SizedBox(height: 32),
+
+            // My Rewards Section
+            _buildSectionHeader("My Purchased Rewards", Icons.inventory),
+            SizedBox(height: 12),
+            _buildMyRewards(),
+            SizedBox(height: 32),
+
+            // Loans Section
             _buildSectionHeader("Green Loans", Icons.account_balance),
             SizedBox(height: 8),
+            Text(
+              "Unlock loans based on your sustainability progress",
+              style: GoogleFonts.quicksand(
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 12),
             _buildLoansSection(),
           ],
         ),
@@ -191,7 +238,32 @@ class _MissionTab2State extends State<MissionTab2> {
     );
   }
 
-  Widget _buildRewardsList() {
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            color: Colors.green[600],
+            size: 20,
+          ),
+          SizedBox(width: 8),
+          Text(
+            title,
+            style: GoogleFonts.quicksand(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.green[700],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Available Rewards Section
+  Widget _buildAvailableRewards() {
     List<RewardItem> filteredRewards = rewards.where((reward) {
       final matchesBookmark = !showBookmarkedOnly || reward.isBookmarked;
       final matchesSearch = reward.title.toLowerCase().contains(searchQuery);
@@ -201,6 +273,22 @@ class _MissionTab2State extends State<MissionTab2> {
     return Column(
       children:
           filteredRewards.map((reward) => _buildRewardCard(reward)).toList(),
+    );
+  }
+
+  // My Rewards Section
+  Widget _buildMyRewards() {
+    return Column(
+      children: purchasedRewards
+          .map((reward) => _buildPurchasedRewardCard(reward))
+          .toList(),
+    );
+  }
+
+  // Loans Section
+  Widget _buildLoansSection() {
+    return Column(
+      children: loans.map((loan) => _buildLoanCard(loan)).toList(),
     );
   }
 
@@ -295,7 +383,7 @@ class _MissionTab2State extends State<MissionTab2> {
           child: GestureDetector(
             onTap: () {
               setState(() {
-                reward.toggleBookmark(); // Use the new method
+                reward.toggleBookmark();
               });
             },
             child: Icon(
@@ -311,24 +399,68 @@ class _MissionTab2State extends State<MissionTab2> {
     );
   }
 
-  // NEW: Build section headers
-  Widget _buildSectionHeader(String title, IconData icon) {
+  Widget _buildPurchasedRewardCard(RewardItem reward) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-      child: Row(
+      margin: EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            color: Colors.green[600],
-            size: 20,
+          Container(
+            height: 150,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: reward.image,
+            ),
           ),
-          SizedBox(width: 8),
-          Text(
-            title,
-            style: GoogleFonts.quicksand(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.green[700],
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: reward.backgroundColor,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    reward.title,
+                    style: GoogleFonts.quicksand(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Using ${reward.title}"),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Use Now",
+                      style: GoogleFonts.quicksand(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -336,25 +468,6 @@ class _MissionTab2State extends State<MissionTab2> {
     );
   }
 
-  // NEW: Build loans section - more compact and prominent
-  Widget _buildLoansSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Unlock loans based on your sustainability progress",
-          style: GoogleFonts.quicksand(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-        SizedBox(height: 12),
-        ...loans.map((loan) => _buildLoanCard(loan)).toList(),
-      ],
-    );
-  }
-
-  // UPDATED: Build individual loan card - more compact and distinct
   Widget _buildLoanCard(LoanItem loan) {
     bool isEligible = _userData.totalPoints >= loan.requiredPoints &&
         _userData.level >= loan.requiredLevel;
@@ -507,7 +620,6 @@ class _MissionTab2State extends State<MissionTab2> {
     );
   }
 
-  // NEW: Handle loan application
   void _applyForLoan(LoanItem loan) {
     showDialog(
       context: context,
@@ -536,7 +648,6 @@ class _MissionTab2State extends State<MissionTab2> {
           ),
           ElevatedButton(
             onPressed: () {
-              // Demo: Deduct points and show success
               setState(() {
                 _userData.addPoints(-loan.requiredPoints);
               });
@@ -564,21 +675,18 @@ class RewardItem {
   final Widget image;
   final Color backgroundColor;
   bool _isBought = false;
-  bool _isBookmarked = false; // Add this line
+  bool _isBookmarked = false;
 
   RewardItem(this.index, this.title, this.subtitle, this.points, this.image,
       this.backgroundColor);
 
-  // Add getter for bookmark status
   bool get isBookmarked => _isBookmarked;
 
-  // Add method to toggle bookmark
   void toggleBookmark() {
     _isBookmarked = !_isBookmarked;
   }
 }
 
-// NEW: Loan item class
 class LoanItem {
   final int index;
   final String title;
