@@ -88,8 +88,18 @@ class _PetPageState extends State<PetPage> {
                       left: 10,
                       right: 10,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          // Chevron Left Button (Back)
+                          CircularButton(
+                            icon: Icons.chevron_left,
+                            onPressed: () {
+                              Navigator.pop(
+                                  context); // Navigate back to previous page
+                            },
+                          ),
+
+                          // Existing Action Buttons (Right-Aligned)
                           Row(
                             children: [
                               CircularButton(
