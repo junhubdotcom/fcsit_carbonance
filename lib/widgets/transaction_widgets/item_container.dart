@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:steadypunpipi_vhack/utils/category_utils.dart';
 import 'package:steadypunpipi_vhack/widgets/transaction_widgets/label.dart';
 
 class ItemContainer extends StatelessWidget {
@@ -28,7 +29,11 @@ class ItemContainer extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                     fontWeight: FontWeight.w700, fontSize: 15),
               ),
-              Label(),
+              Label(
+          color: getCategoryColor(transactionItem.category),
+          icon: getCategoryIcon(transactionItem.category),
+          text: transactionItem.category,
+        ),
             ],
           ),
           isExpense
@@ -49,13 +54,13 @@ class ItemContainer extends StatelessWidget {
                 style: GoogleFonts.quicksand(
                     fontWeight: FontWeight.w600, fontSize: 14),
               ),
-              isExpense
-                  ? Text(
-                      '+${transactionItem.carbon_footprint.toStringAsFixed(2)}kg CO2e',
-                      style: GoogleFonts.quicksand(
-                          fontWeight: FontWeight.w600, fontSize: 13),
-                    )
-                  : SizedBox(),
+              // isExpense
+              //     ? Text(
+              //         '+${transactionItem.carbon_footprint.toStringAsFixed(2)}kg CO2e',
+              //         style: GoogleFonts.quicksand(
+              //             fontWeight: FontWeight.w600, fontSize: 13),
+              //       )
+              //     : SizedBox(),
             ],
           ),
         ],

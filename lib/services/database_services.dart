@@ -5,9 +5,9 @@ import 'package:steadypunpipi_vhack/models/income.dart';
 // import 'package:steadypunpipi_vhack/models/expensealt.dart';
 // import 'package:steadypunpipi_vhack/models/expense_itemalt.dart';
 
-const String EXPENSE_COLLECTION_REF = "test";
-const String INCOME_COLLECTION_REF = "testIncome";
-const String EXPENSE_ITEM_COLLECTION_REF = "testItem";
+const String EXPENSE_COLLECTION_REF = "expense";
+const String INCOME_COLLECTION_REF = "income";
+const String EXPENSE_ITEM_COLLECTION_REF = "expenseItem";
 
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -75,6 +75,30 @@ class DatabaseService {
     }
   }
 
+  Future<List<Income>> getIncomesByDay(DateTime targetDate) async {
+    try {
+      DateTime startOfDay = targetDate.copyWith(
+          hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+      DateTime endOfDay = targetDate.copyWith(
+          hour: 23, minute: 59, second: 59, millisecond: 999, microsecond: 999);
+
+      QuerySnapshot<Income> snapshot = await incomesCollection
+          .where('dateTime', isGreaterThanOrEqualTo: startOfDay)
+          .where('dateTime', isLessThanOrEqualTo: endOfDay)
+          .get();
+
+      return snapshot.docs.map((doc) {
+        Income income = doc.data();
+        income.id = doc.id;
+        return income;
+      }).toList();
+    } catch (e) {
+      print(
+          "Error getting expenses for ${targetDate.toLocal().toString().split(' ')[0]}: $e");
+      return [];
+    }
+  }
+
   Future<DocumentReference<Expense>> addExpense(Expense expense) async {
     return await expensesCollection.add(expense);
   }
@@ -92,6 +116,19 @@ class DatabaseService {
     await expensesCollection.doc(expenseId).delete();
   }
 
+  Future<List<Income>> getAllIncomes() async {
+    try {
+      QuerySnapshot<Income> snapshot = await incomesCollection.get();
+      return snapshot.docs.map((doc) {
+        Income income = doc.data();
+        income.id = doc.id;
+        return income;
+      }).toList();
+    } catch (e) {
+      print("Error getting all expenses: $e");
+      return [];
+    }
+  }
   //Income
   Future<DocumentReference<Income>> addIncome(Income income) async {
     return await incomesCollection.add(income);
