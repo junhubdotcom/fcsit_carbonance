@@ -128,9 +128,8 @@ class _TransactionContainerState extends State<TransactionContainer> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start, 
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       /// Allow left side to take available space

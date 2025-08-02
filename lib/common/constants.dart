@@ -12,7 +12,7 @@ class AppConstants {
   static const String GEMINI_API_KEY =
       "AIzaSyDvgydDIgm2BnHGmzghqGIQSgzvRitkDkA";
   static const String GOOGLE_VISION_API_KEY =
-      "AIzaSyAOKtlOJCS_N38VLCnBZ5LY08BHy2Bc3XA";
+      "AIzaSyCQx91CIStt3gfZBAVvAXqIl76dhVhfwro";
   static const String TRANSACTION_GEMINI_API_KEY =
       "AIzaSyAeFUO1ZZgTOkF4NUW3F4_tB3w06-lkWlw";
   static const String CARBON_API_KEY =

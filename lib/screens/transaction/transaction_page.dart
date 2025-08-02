@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:steadypunpipi_vhack/models/expense.dart';
+import 'package:steadypunpipi_vhack/models/income.dart';
 import 'package:steadypunpipi_vhack/screens/transaction/filter.dart';
 import 'package:steadypunpipi_vhack/screens/transaction/record_transaction.dart';
 import 'package:steadypunpipi_vhack/screens/transaction/scanner.dart';
@@ -23,7 +24,14 @@ class _TransactionPageState extends State<TransactionPage> {
   bool isLoading = true;
   DatabaseService _databaseService = DatabaseService();
   late List<Expense> transactionList;
+  late List<Income> incomeList;
   late List<DateTime> uniqueDates;
+  double totalIncome = 0.0;
+  double totalExpense = 0.0;
+  double totalCarbonFootprint = 0.0;
+  double dailyIncome = 0.0;
+  double dailyExpense = 0.0;
+  double dailyCarbonFootprint = 0.0;
 
   @override
   void initState() {
@@ -32,16 +40,39 @@ class _TransactionPageState extends State<TransactionPage> {
     initData();
   }
 
-  void initData() async {
-    await getAllExpenses();
-    // DateTime targetDate = DateTime.parse("2025-04-04 00:00:00.000");
-    // await getExpensesByDay(targetDate);
-    if (mounted) {
-      setState(() {
-        isLoading = false;
-      });
-    }
+ void initData() async {
+  await getAllExpenses();
+  await getAllIncomes();
+
+  // ✅ Combine unique dates from both expenses and incomes
+  final Set<DateTime> dateSet = {};
+
+  for (var transaction in transactionList) {
+    Timestamp timestamp = transaction.dateTime;
+    DateTime dateTime = timestamp.toDate();
+    dateSet.add(DateTime(dateTime.year, dateTime.month, dateTime.day));
   }
+
+  for (var income in incomeList) {
+    Timestamp timestamp = income.dateTime;
+    DateTime dateTime = timestamp.toDate();
+    dateSet.add(DateTime(dateTime.year, dateTime.month, dateTime.day));
+  }
+
+  uniqueDates = dateSet.toList()
+    ..sort((a, b) => b.compareTo(a)); // Descending
+
+  if (transactionList.isNotEmpty || incomeList.isNotEmpty) {
+    await getTotal();
+  }
+
+  if (mounted) {
+    setState(() {
+      isLoading = false;
+    });
+  }
+}
+
 
   @override
   void dispose() {
@@ -65,6 +96,31 @@ class _TransactionPageState extends State<TransactionPage> {
     } else {
       print("No expenses found.");
     }
+  }
+   Future<void> getAllIncomes() async {
+    incomeList = await _databaseService.getAllIncomes();
+    if (incomeList.isNotEmpty) {
+      final Set<DateTime> dateSet = {};
+      for (var income in incomeList) {
+        Timestamp timestamp = income.dateTime;
+        DateTime dateTime = timestamp.toDate();
+        dateSet.add(DateTime(dateTime.year, dateTime.month,
+            dateTime.day)); // Only keep the date part
+      }
+      uniqueDates = dateSet.toList()
+        ..sort(
+            (a, b) => b.compareTo(a)); // Sort unique dates in descending order
+      // Debug print unique dates
+    } else {
+      print("No incomes found.");
+    }
+  }
+
+  Future<void> getTotal() async {
+    totalIncome = getTotalIncome(incomeList);
+    totalExpense = await getTotalExpense(transactionList);
+    totalCarbonFootprint = getTotalCarbonFootprint(transactionList);
+
   }
 
   String displayMonth = DateFormat('MMMM yyyy').format(DateTime.now());
@@ -113,6 +169,82 @@ class _TransactionPageState extends State<TransactionPage> {
       }
     });
   }
+
+  double getTotalIncome(List<Income> incomeList) {
+  return incomeList.fold(0.0, (sum, e) => sum + (e.amount ?? 0));
+}
+
+Future<double> getTotalExpense(List<Expense> expenses) async {
+  double total = 0.0;
+
+  for (final expense in expenses) {
+    for (final itemRef in expense.items) {
+      try {
+        final snapshot = await itemRef.get();
+        final item = snapshot.data();
+        if (item != null) {
+          total += item.price ?? 0.0;
+        }
+      } catch (e) {
+        print("Error fetching item from ${itemRef.id}: $e");
+      }
+    }
+  }
+
+  return total;
+}
+
+
+double getTotalCarbonFootprint(List<Expense> expenseList) {
+  final double expenseCarbon = expenseList.fold(0.0, (sum, e) => sum + (e.carbonFootprint ?? 0));
+  return expenseCarbon;
+}
+
+double getDailyIncome(List<Income> incomeList, DateTime date) {
+  return incomeList
+      .where((e) => _isSameDay(e.dateTime.toDate(), date))
+      .fold(0.0, (sum, e) => sum + (e.amount ?? 0));
+}
+
+Future<double> getDailyExpense(List<Expense> expenses, DateTime date) async {
+  double total = 0.0;
+
+  for (final expense in expenses) {
+    if (_isSameDay(expense.dateTime.toDate(), date)) {
+      for (final itemRef in expense.items) {
+        try {
+          final snapshot = await itemRef.get();
+          final item = snapshot.data();
+          if (item != null) {
+            total += item.price ?? 0.0;
+          }
+        } catch (e) {
+          print("Error fetching item from ${itemRef.id}: $e");
+        }
+      }
+    }
+  }
+
+  return total;
+}
+
+
+double getDailyCarbonFootprint(List<Expense> incomeList, List<Expense> expenseList, DateTime date) {
+  final double incomeCarbon = incomeList
+      .where((e) => _isSameDay(e.dateTime.toDate(), date))
+      .fold(0.0, (sum, e) => sum + (e.carbonFootprint ?? 0));
+
+  final double expenseCarbon = expenseList
+      .where((e) => _isSameDay(e.dateTime.toDate(), date))
+      .fold(0.0, (sum, e) => sum + (e.carbonFootprint ?? 0));
+
+  return incomeCarbon + expenseCarbon;
+}
+
+bool _isSameDay(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -196,18 +328,18 @@ class _TransactionPageState extends State<TransactionPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Indicator(title: 'Income', value: 'RM 1000.00'),
+                                Indicator(title: 'Income', value: 'RM ${totalIncome.toStringAsFixed(2)}'),
                                 SizedBox(
                                   height: 5,
                                 ),
                                 Indicator(
-                                    title: 'Expenses', value: 'RM 900.00'),
+                                    title: 'Expenses', value: 'RM ${totalExpense.toStringAsFixed(2)}'),
                                 SizedBox(
                                   height: 5,
                                 ),
                                 Indicator(
                                     title: 'Carbon Footprint',
-                                    value: '500 CO2e'),
+                                    value: '${totalCarbonFootprint.toStringAsFixed(2)} CO2e'),
                               ],
                             ),
                           ),

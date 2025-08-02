@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Income {
+  String? id; 
   String name;
   String category;
   double amount;
@@ -10,6 +11,7 @@ class Income {
   String? proofOfIncome; // Optional
 
   Income({
+    this.id, // Optional: to store the document ID if needed
     this.name = '',
     this.category = 'Salary',
     this.amount = 0.00,
@@ -22,6 +24,7 @@ class Income {
   // Convert Income object to JSON
   Map<String, dynamic> toJson() {
     return {
+      'id':id,
       'name': name,
       'category': category,
       'amount': amount,
@@ -35,6 +38,7 @@ class Income {
   // Create Income object from JSON
   factory Income.fromJson(Map<String, dynamic> json) {
     return Income(
+      id: json['id'], // Optional: to store the document ID if needed
       name: json['name'] ?? '',
       category: json['category'] ?? 'Salary',
       amount: (json['amount'] ?? 0).toDouble(),
