@@ -10,6 +10,7 @@ class Expense {
   String? location;
   String? receiptImagePath;
   String? additionalImagePath;
+  double carbonFootprint;
 
   Expense({
     String? id,
@@ -20,13 +21,15 @@ class Expense {
     String? location,
     String? receiptImagePath,
     String? additionalImagePath,
+    double? carbonFootprint,
   })  : transactionName = transactionName ?? "",
         items = items ?? [],
         paymentMethod = paymentMethod ?? "Cash",
         dateTime = dateTime ?? Timestamp.now(),
         location = location ?? "None",
         receiptImagePath = receiptImagePath ?? "",
-        additionalImagePath = additionalImagePath ?? "";
+        additionalImagePath = additionalImagePath ?? "",
+        carbonFootprint = carbonFootprint ?? 0.0 ;
 
   // From JSON
   factory Expense.fromJson(Map<String, dynamic> json) {
@@ -68,13 +71,13 @@ class Expense {
       transactionName: json['transactionName'] ?? "",
       items: typedItemRefs,
       paymentMethod: json['paymentMethod'] ?? "Cash",
-      // You can handle the following fields if Gemini returns them later or set defaults
       dateTime: json['dateTime'] is Timestamp
           ? json['dateTime'] as Timestamp
           : Timestamp.now(),
       location: json['location'] ?? "",
       receiptImagePath: json['receiptImagePath'] ?? "",
       additionalImagePath: "",
+      carbonFootprint: (json['carbon_footprint'] ?? 0.0).toDouble(),
     );
   }
 
@@ -88,9 +91,10 @@ class Expense {
       'location': location,
       'receiptImagePath': receiptImagePath,
       'additionalImagePath': additionalImagePath,
+      'carbon_footprint': carbonFootprint,
     };
 
-    if (items != null && items.toString().isNotEmpty) {
+    if (items.toString().isNotEmpty) {
       data['items'] = items;
     }
 

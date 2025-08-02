@@ -12,11 +12,11 @@ class AppConstants {
   static const String GEMINI_API_KEY =
       "AIzaSyDvgydDIgm2BnHGmzghqGIQSgzvRitkDkA";
   static const String GOOGLE_VISION_API_KEY =
-      "AIzaSyAOKtlOJCS_N38VLCnBZ5LY08BHy2Bc3XA";
+      "AIzaSyCQx91CIStt3gfZBAVvAXqIl76dhVhfwro";
   static const String TRANSACTION_GEMINI_API_KEY =
-      "AIzaSyByfHg3R3hd4XrxmOoMNaMaKsW0GjuscIc";
+      "AIzaSyAeFUO1ZZgTOkF4NUW3F4_tB3w06-lkWlw";
   static const String CARBON_API_KEY =
-      "87a834b021e3a52ef7a31d63824f2cc7250b53c8ad608500c985d710e116290bb2f615a0f0316b5a76a1786e786735e31890c22dc569dff8efdc39ff873c615f";
+      "385950baffe43ee29d2238d0ce92dc23f55bbc6934a39b109bc0399f640f4af3be46dfb7d0112808796abc4453c4247544652c9e0ac32d0ccbf19de73dd64286";
 
   // 🎨 Color Palette (Light Theme)
   static const Color primaryColor = Color(0xFF4CAF50);

@@ -3,14 +3,12 @@ class ExpenseItem {
   String category;
   int quantity;
   double price;
-  double carbon_footprint;
 
   ExpenseItem(
       {this.name = '',
       this.category = 'Food',
       this.quantity = 0,
-      this.price = 0.00,
-      this.carbon_footprint = 0.00});
+      this.price = 0.00,});
 
   // From JSON
   factory ExpenseItem.fromJson(Map<String, dynamic> json) {
@@ -19,7 +17,6 @@ class ExpenseItem {
       category: json['category'] ?? 'Food',
       quantity: int.tryParse(json['quantity'].toString()) ?? 0,
       price: (json['price'] ?? 0).toDouble(),
-      carbon_footprint: (json['carbon_footprint'] ?? 0).toDouble(),
     );
   }
 
@@ -30,7 +27,6 @@ class ExpenseItem {
       'category': category,
       'quantity': quantity,
       'price': price,
-      'carbon_footprint': carbon_footprint,
     };
   }
 }
