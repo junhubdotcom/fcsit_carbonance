@@ -37,7 +37,7 @@ Carbonance's dashboard visually summarizes user finances and environmental impac
 Carbonance gamifies financial management and sustainable living through engaging features. Users set financial goals broken into AI-powered quests (Financial & Sustainability), earning in-app rewards like virtual pet accessories, badges, vouchers, and redeemable Currency upon completion. A Leaderboard fosters friendly competition in saving and carbon reduction (with privacy options and social sharing), while partner collaborations aim to provide real-world value to achievements. This system motivates users to actively pursue their financial and sustainability goals within a supportive and rewarding environment.
 
 ## Get Started
-Follow these steps to set up and run The Watcher.
+Follow these steps to set up and run Carbonance
 
 ### 1. Prerequisites
 Before proceeding, ensure you have the following installed:  
@@ -48,8 +48,8 @@ Before proceeding, ensure you have the following installed:
 ### 2. Clone the Repository
 Clone the project from your GitHub.
 ```
-- git clone https://github.com/junhubdotcom/steadypunpipi_kithack.git
-- cd steadypunpipi_kithack
+- git clone https://github.com/junhubdotcom/fcsit_carbonance.git
+- cd fcsit_carbonance
 ```
 
 ### 3. Set Up the Flutter Frontend
