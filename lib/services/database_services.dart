@@ -2,39 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:steadypunpipi_vhack/models/expense.dart';
 import 'package:steadypunpipi_vhack/models/expense_item.dart';
 import 'package:steadypunpipi_vhack/models/income.dart';
+// import 'package:steadypunpipi_vhack/models/expensealt.dart';
+// import 'package:steadypunpipi_vhack/models/expense_itemalt.dart';
 
-class FirestoreCollections {
-  // Main Data Collections (Matching Firebase Functions)
-  static const String EXPENSES = "Expense";
-  static const String INCOMES = "Income";
-  static const String EXPENSE_ITEMS = "ExpenseItem";
-
-  // AI & Insights Collections (Matching Production)
-  static const String CONNECT_EARTH_INSIGHTS = "ConnectEarthInsights";
-  static const String INSIGHTS_SUMMARY = "InsightsSummary";
-
-  // Green Credit & Loan Collections
-  static const String GREEN_CREDITS = "GreenCredits";
-  static const String GREEN_LOANS = "GreenLoans";
-
-  // Unified Reward System Collections
-  static const String UNIFIED_REWARDS = "UnifiedRewards";
-  static const String REWARD_REDEMPTIONS = "RewardRedemptions";
-
-  // Activity Carbon Collections
-  static const String ACTIVITY_CARBON = "ActivityCarbon";
-
-  // Income Collections
-  static const String INCOME = "Income";
-
-  // System Collections
-  static const String TRIGGERS = "Triggers";
-}
-
-// Legacy collection names (for backward compatibility)
-const String EXPENSE_COLLECTION_REF = FirestoreCollections.EXPENSES;
-const String INCOME_COLLECTION_REF = FirestoreCollections.INCOMES;
-const String EXPENSE_ITEM_COLLECTION_REF = FirestoreCollections.EXPENSE_ITEMS;
+const String EXPENSE_COLLECTION_REF = "expense";
+const String INCOME_COLLECTION_REF = "income";
+const String EXPENSE_ITEM_COLLECTION_REF = "expenseItem";
 
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -111,6 +84,30 @@ class DatabaseService {
     }
   }
 
+  Future<List<Income>> getIncomesByDay(DateTime targetDate) async {
+    try {
+      DateTime startOfDay = targetDate.copyWith(
+          hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+      DateTime endOfDay = targetDate.copyWith(
+          hour: 23, minute: 59, second: 59, millisecond: 999, microsecond: 999);
+
+      QuerySnapshot<Income> snapshot = await incomesCollection
+          .where('dateTime', isGreaterThanOrEqualTo: startOfDay)
+          .where('dateTime', isLessThanOrEqualTo: endOfDay)
+          .get();
+
+      return snapshot.docs.map((doc) {
+        Income income = doc.data();
+        income.id = doc.id;
+        return income;
+      }).toList();
+    } catch (e) {
+      print(
+          "Error getting expenses for ${targetDate.toLocal().toString().split(' ')[0]}: $e");
+      return [];
+    }
+  }
+
   Future<DocumentReference<Expense>> addExpense(Expense expense) async {
     try {
       final now = DateTime.now();
@@ -141,6 +138,19 @@ class DatabaseService {
     await expensesCollection.doc(expenseId).delete();
   }
 
+  Future<List<Income>> getAllIncomes() async {
+    try {
+      QuerySnapshot<Income> snapshot = await incomesCollection.get();
+      return snapshot.docs.map((doc) {
+        Income income = doc.data();
+        income.id = doc.id;
+        return income;
+      }).toList();
+    } catch (e) {
+      print("Error getting all expenses: $e");
+      return [];
+    }
+  }
   //Income
   Future<DocumentReference<Income>> addIncome(Income income) async {
     try {

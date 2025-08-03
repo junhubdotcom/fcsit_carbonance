@@ -38,10 +38,7 @@ class GreenCreditService {
   // Get or create user's green credit profile
   Future<GreenCredit> getUserGreenCredit(String userId) async {
     try {
-      final doc = await _firestore
-          .collection(FirestoreCollections.GREEN_CREDITS)
-          .doc(userId)
-          .get();
+      final doc = await _firestore.collection('greenCredits').doc(userId).get();
 
       if (doc.exists) {
         return GreenCredit.fromJson(doc.data()!);
@@ -49,7 +46,7 @@ class GreenCreditService {
         // Create new green credit profile
         final newCredit = GreenCredit();
         await _firestore
-            .collection(FirestoreCollections.GREEN_CREDITS)
+            .collection('greenCredits')
             .doc(userId)
             .set(newCredit.toJson());
         return newCredit;
@@ -75,9 +72,11 @@ class GreenCreditService {
       }
     }
 
-    // Additional credits for low carbon footprint items
-    if (item.carbon_footprint < 1.0) {
-      baseCredits += item.price * 0.5; // Bonus for very low carbon items
+    // Additional credits for eco-friendly items (based on category)
+    if (item.category.toLowerCase().contains('eco') ||
+        item.category.toLowerCase().contains('organic') ||
+        item.category.toLowerCase().contains('sustainable')) {
+      baseCredits += item.price * 0.5; // Bonus for eco-friendly items
     }
 
     return baseCredits;
@@ -113,7 +112,8 @@ class GreenCreditService {
 
         totalCreditsEarned += creditsEarned;
         totalCarbonSaved += carbonSaved;
-        totalCarbonEmitted += item.carbon_footprint;
+        // Estimate carbon emitted based on category (simplified)
+        totalCarbonEmitted += _estimateCarbonEmitted(item);
 
         // Add credits to specific category
         if (creditsEarned > 0) {
@@ -129,7 +129,7 @@ class GreenCreditService {
 
       // Save updated green credit
       await _firestore
-          .collection(FirestoreCollections.GREEN_CREDITS)
+          .collection('greenCredits')
           .doc(userId)
           .set(greenCredit.toJson());
 
@@ -140,6 +140,26 @@ class GreenCreditService {
     } catch (e) {
       print('🔥 [GREEN_CREDIT] Error processing expense for credits: $e');
     }
+  }
+
+  // Estimate carbon emitted based on item category
+  double _estimateCarbonEmitted(ExpenseItem item) {
+    // Simplified carbon emission estimation based on category
+    Map<String, double> emissionRates = {
+      'Food': 0.5,
+      'Transport': 2.0,
+      'Energy': 1.5,
+      'Shopping': 0.3,
+      'Entertainment': 0.2,
+    };
+
+    for (String category in emissionRates.keys) {
+      if (item.category.toLowerCase().contains(category.toLowerCase())) {
+        return item.price * emissionRates[category]!;
+      }
+    }
+
+    return item.price * 0.3; // Default emission rate
   }
 
   // Check and award achievements
@@ -266,7 +286,7 @@ class GreenCreditService {
       final startDate = now.subtract(Duration(days: days));
 
       final query = await _firestore
-          .collection(FirestoreCollections.GREEN_CREDITS)
+          .collection('greenCredits')
           .doc(userId)
           .collection('history')
           .where('date', isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))

@@ -22,9 +22,6 @@ import 'package:steadypunpipi_vhack/widgets/transaction_widgets/item_header.dart
 import 'package:steadypunpipi_vhack/widgets/transaction_widgets/small_title.dart';
 import 'package:steadypunpipi_vhack/widgets/transaction_widgets/transaction_button.dart';
 import 'package:steadypunpipi_vhack/widgets/transaction_widgets/transaction_textfield.dart';
-import 'package:steadypunpipi_vhack/services/green_credit_service.dart';
-import 'package:steadypunpipi_vhack/services/unified_reward_service.dart';
-import 'package:steadypunpipi_vhack/services/activity_carbon_service.dart';
 
 class RecordTransaction extends StatefulWidget {
   // Expense? expense;
@@ -66,9 +63,6 @@ class _RecordTransactionState extends State<RecordTransaction> {
 
   CarbonService carbonService = CarbonService();
   DatabaseService db = DatabaseService();
-  GreenCreditService greenCreditService = GreenCreditService();
-  UnifiedRewardService unifiedRewardService = UnifiedRewardService();
-  ActivityCarbonService activityCarbonService = ActivityCarbonService();
 
   Future pickImage(ImageSource source, bool isReceipt) async {
     try {
@@ -130,18 +124,19 @@ class _RecordTransactionState extends State<RecordTransaction> {
       Expense expense, List<ExpenseItem> items) async {
     try {
       List<DocumentReference<ExpenseItem>> itemRefs = [];
-
-      for (int i = 0; i < items.length; i++) {
-        final ref = await db.addExpenseItem(items[i]);
+      print("ExpenseItems: $items");
+      for (ExpenseItem item in items) {
+        final ref = await db.addExpenseItem(item);
         itemRefs.add(ref);
+        print("ref: $ref");
       }
 
       expense.items = itemRefs;
-      final expenseRef = await db.addExpense(expense);
 
+      final expenseRef = await db.addExpense(expense);
       return expenseRef;
     } catch (e) {
-      print("❌ Error saving expense with items: $e");
+      print("Error saving expense with items: $e");
       rethrow;
     }
   }
@@ -506,33 +501,6 @@ class _RecordTransactionState extends State<RecordTransaction> {
                         }
                         await carbonService.generateCarbonApiJson(
                             transaction, expenseItems);
-
-                        // Process unified rewards and activity-based carbon accounting
-                        const String userId =
-                            'default_user'; // In real app, get from auth
-
-                        // Process unified rewards
-                        await unifiedRewardService.processTransaction(
-                          userId: userId,
-                          items: expenseItems,
-                          totalAmount: expenseItems.fold(
-                              0.0,
-                              (sum, item) =>
-                                  sum + (item.price * item.quantity)),
-                        );
-
-                        // Process activity-based carbon accounting
-                        await activityCarbonService
-                            .processExpenseForActivityCarbon(
-                          userId: userId,
-                          items: expenseItems,
-                          transactionDate: transaction.dateTime.toDate(),
-                        );
-
-                        // Process green credits (legacy support)
-                        await greenCreditService.processExpenseForCredits(
-                            userId, expenseItems);
-
                         final expenseRef =
                             await saveExpense(transaction, expenseItems);
                         expenseRefId = expenseRef.id;

@@ -175,7 +175,7 @@ If any details are missing or unclear, make a best guess and let the user know y
       print("Complete Expense: $completeExpense");
       await carbonService.generateCarbonApiJson(
           completeExpense.generalDetails, completeExpense.items);
-      print("carbon footprint ${completeExpense.items[0].carbon_footprint}");
+      print("carbon footprint ${completeExpense.generalDetails.carbonFootprint}");
       final expenseRef = await saveExpense(
           completeExpense.generalDetails, completeExpense.items);
       print(expenseRef);

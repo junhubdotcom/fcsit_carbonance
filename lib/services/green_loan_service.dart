@@ -59,9 +59,8 @@ class GreenLoanService {
       loan.calculateMonthlyPayment();
 
       // Save loan application
-      final docRef = await _firestore
-          .collection(FirestoreCollections.GREEN_LOANS)
-          .add(loan.toJson());
+      final docRef =
+          await _firestore.collection('greenLoans').add(loan.toJson());
 
       loan.id = docRef.id;
 
@@ -133,10 +132,7 @@ class GreenLoanService {
   // Approve loan
   Future<bool> _approveLoan(String loanId) async {
     try {
-      final doc = await _firestore
-          .collection(FirestoreCollections.GREEN_LOANS)
-          .doc(loanId)
-          .get();
+      final doc = await _firestore.collection('greenLoans').doc(loanId).get();
 
       if (!doc.exists) return false;
 
@@ -144,7 +140,7 @@ class GreenLoanService {
       loan.approve();
 
       await _firestore
-          .collection(FirestoreCollections.GREEN_LOANS)
+          .collection('greenLoans')
           .doc(loanId)
           .update(loan.toJson());
 
@@ -160,7 +156,7 @@ class GreenLoanService {
   Future<List<GreenLoan>> getUserLoans(String userId) async {
     try {
       final query = await _firestore
-          .collection(FirestoreCollections.GREEN_LOANS)
+          .collection('greenLoans')
           .where('userId', isEqualTo: userId)
           .orderBy('applicationDate', descending: true)
           .get();
@@ -179,10 +175,7 @@ class GreenLoanService {
   // Get loan by ID
   Future<GreenLoan?> getLoanById(String loanId) async {
     try {
-      final doc = await _firestore
-          .collection(FirestoreCollections.GREEN_LOANS)
-          .doc(loanId)
-          .get();
+      final doc = await _firestore.collection('greenLoans').doc(loanId).get();
 
       if (!doc.exists) return null;
 
@@ -204,7 +197,7 @@ class GreenLoanService {
       loan.makePayment(paymentAmount);
 
       await _firestore
-          .collection(FirestoreCollections.GREEN_LOANS)
+          .collection('greenLoans')
           .doc(loanId)
           .update(loan.toJson());
 

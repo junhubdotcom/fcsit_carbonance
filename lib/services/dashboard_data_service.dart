@@ -37,9 +37,32 @@ class DashboardDataService {
       String period, DateTime? startDate, DateTime? endDate) {
     if (!_isLoaded) return [];
 
-    // For now, return all transactions to show data
-    // Later we can implement proper date filtering
-    return _transactions;
+    // Filter transactions based on period
+    DateTime now = DateTime.now();
+    DateTime periodStart;
+    DateTime periodEnd = now;
+
+    switch (period) {
+      case 'daily':
+        // Last 7 days
+        periodStart = now.subtract(Duration(days: 7));
+        break;
+      case 'weekly':
+        // Last 4 weeks
+        periodStart = now.subtract(Duration(days: 28));
+        break;
+      case 'monthly':
+        // Last 3 months
+        periodStart = now.subtract(Duration(days: 90));
+        break;
+      default:
+        return _transactions;
+    }
+
+    return _transactions.where((transaction) {
+      return transaction.date.isAfter(periodStart) &&
+          transaction.date.isBefore(periodEnd.add(Duration(days: 1)));
+    }).toList();
   }
 
   // Spending data based on real transactions
@@ -51,9 +74,12 @@ class DashboardDataService {
     double totalAmount = 0;
 
     for (var transaction in periodTransactions) {
-      categoryTotals[transaction.category] =
-          (categoryTotals[transaction.category] ?? 0) + transaction.amount;
-      totalAmount += transaction.amount;
+      // Only include expenses, not income
+      if (transaction.type != 'income') {
+        categoryTotals[transaction.category] =
+            (categoryTotals[transaction.category] ?? 0) + transaction.amount;
+        totalAmount += transaction.amount;
+      }
     }
 
     if (totalAmount == 0) {
@@ -92,9 +118,12 @@ class DashboardDataService {
     Map<String, double> dailyCarbon = {};
 
     for (var transaction in periodTransactions) {
-      String dayKey = transaction.date.toIso8601String().split('T')[0];
-      dailyCarbon[dayKey] =
-          (dailyCarbon[dayKey] ?? 0) + (transaction.carbonFootprint ?? 0);
+      // Only include expenses for carbon footprint
+      if (transaction.type != 'income') {
+        String dayKey = transaction.date.toIso8601String().split('T')[0];
+        dailyCarbon[dayKey] =
+            (dailyCarbon[dayKey] ?? 0) + (transaction.carbonFootprint ?? 0);
+      }
     }
 
     // Convert to FlSpot format
@@ -118,10 +147,12 @@ class DashboardDataService {
     Map<String, double> categorySpending = {};
 
     for (var transaction in periodTransactions) {
-      totalSpending += transaction.amount;
-      totalCarbon += transaction.carbonFootprint ?? 0;
-      categorySpending[transaction.category] =
-          (categorySpending[transaction.category] ?? 0) + transaction.amount;
+      if (transaction.type != 'income') {
+        totalSpending += transaction.amount;
+        totalCarbon += transaction.carbonFootprint ?? 0;
+        categorySpending[transaction.category] =
+            (categorySpending[transaction.category] ?? 0) + transaction.amount;
+      }
     }
 
     // Calculate trends
@@ -154,11 +185,16 @@ class DashboardDataService {
         getTransactionsByPeriod(period, null, null);
 
     double totalSpent = 0;
+    double totalIncome = 0;
     double totalCarbon = 0;
     double carbonSaved = 0;
 
     for (var transaction in periodTransactions) {
-      totalSpent += transaction.amount;
+      if (transaction.type == 'income') {
+        totalIncome += transaction.amount;
+      } else {
+        totalSpent += transaction.amount;
+      }
       totalCarbon += transaction.carbonFootprint ?? 0;
 
       // Calculate carbon saved (assuming some transactions are more sustainable)
@@ -170,6 +206,7 @@ class DashboardDataService {
 
     return {
       'totalSpent': totalSpent,
+      'totalIncome': totalIncome,
       'totalCarbon': totalCarbon,
       'carbonSaved': carbonSaved,
     };

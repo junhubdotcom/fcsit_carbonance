@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:steadypunpipi_vhack/models/expense.dart';
 import 'package:steadypunpipi_vhack/models/expense_item.dart';
+import 'package:steadypunpipi_vhack/models/income.dart';
 import 'package:steadypunpipi_vhack/services/database_services.dart';
 import 'package:steadypunpipi_vhack/widgets/transaction_widgets/transaction_container.dart';
 
@@ -25,6 +26,8 @@ class _TransactionListState extends State<TransactionList> {
     uniqueDates = widget.uniqueDates;
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -45,7 +48,6 @@ class _buildTransactionDay extends StatefulWidget {
   final DateTime date;
 
   const _buildTransactionDay({
-    super.key,
     required this.date,
   });
 
@@ -59,6 +61,7 @@ class _buildTransactionDayState extends State<_buildTransactionDay> {
   late final String day;
   late final String month;
   late List<Expense> transactionList = [];
+  late List<Income> incomeList = [];
 
   void initState() {
     super.initState();
@@ -79,6 +82,59 @@ class _buildTransactionDayState extends State<_buildTransactionDay> {
   Future<void> getExpensesByDay(DateTime targetDate) async {
     transactionList = await _databaseService.getExpensesByDay(targetDate);
   }
+
+  Future<void> getIncomesByDay(DateTime targetDate) async {
+    incomeList = await _databaseService.getIncomesByDay(targetDate);
+  }
+
+    Future<double> calculateDailyExpense() async {
+    double total = 0.0;
+    for (final expense in transactionList) {
+      if (expense.items != null) {
+        for (final itemRef in expense.items!) {
+          try {
+            final snapshot = await itemRef.get();
+            final item = snapshot.data() as ExpenseItem?;
+            if (item != null && item.price < 0) {
+              total += item.price.abs();
+            }
+          } catch (e) {
+            print("Error fetching item for expense: $e");
+          }
+        }
+      }
+    }
+    return total;
+  }
+
+  Future<double> calculateDailyIncome() async {
+  double total = 0.0;
+  for (final income in incomeList) {
+    try {
+      if (income.amount != null && income.amount > 0) {
+        total += income.amount!;
+      }
+    } catch (e) {
+      print("Error processing income: $e");
+    }
+  }
+  return total;
+}
+
+  Future<double> calculateDailyCarbon() async {
+  double total = 0.0;
+  for (final expense in transactionList) {
+    try {
+      if (expense.carbonFootprint != null) {
+        total += expense.carbonFootprint!;
+      }
+    } catch (e) {
+      print("Error processing carbon footprint: $e");
+    }
+  }
+  return total;
+}
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -155,38 +211,6 @@ class _buildTransactionDayState extends State<_buildTransactionDay> {
                       physics: NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final Expense currentExpense = transactionList[index];
-                        // // Immediately execute an async function to fetch the item name
-                        // (() async {
-                        //   if (currentExpense.items != null &&
-                        //       currentExpense.items.isNotEmpty) {
-                        //     DocumentReference<ExpenseItem> itemRef =
-                        //         currentExpense.items[0];
-                        //     try {
-                        //       DocumentSnapshot<ExpenseItem> itemSnapshot =
-                        //           await itemRef.get();
-                        //       if (itemSnapshot.exists &&
-                        //           itemSnapshot.data() != null) {
-                        //         ExpenseItem? itemData = itemSnapshot.data();
-                        //         if (itemData?.name != null) {
-                        //           setState(() {
-                        //             itemName = itemData?.name ?? 'No Name';
-                        //           });
-                        //         }
-                        //       }
-                        //     } catch (e) {
-                        //       print(
-                        //           "Error fetching item name (${itemRef.id}): $e");
-                        //       if (mounted) {
-                        //         setState(() {
-                        //           itemName = 'Error Loading Name';
-                        //         });
-                        //       }
-                        //     }
-                        //   } else {
-                        //     itemName = 'No Items';
-                        //   }
-                        // })();
-
                         return TransactionContainer(
                           transactionId: currentExpense.id ?? "",
                         );

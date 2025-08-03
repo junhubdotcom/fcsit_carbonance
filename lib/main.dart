@@ -77,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           backgroundColor: Colors.green.shade400,
           child: Icon(
-            Icons.pets,
+            Icons.energy_savings_leaf,
             color: Color(0XFFE5ECDD),
             size: 30,
           ),
@@ -115,11 +115,11 @@ class _MainScreenState extends State<MainScreen> {
             SizedBox(width: 40), // Space for the FloatingActionButton
             IconButton(
               icon: Icon(
-                Icons.flag,
+                Icons.card_giftcard,
                 color: _currentIndex == 3 ? Colors.black : Colors.grey.shade600,
               ),
               onPressed: () {
-                _onTabTapped(3); // Navigate to the MissionPage
+                _onTabTapped(3); // Navigate to the RewardsScreen
               },
             ),
             IconButton(

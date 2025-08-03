@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:steadypunpipi_vhack/models/finance_data.dart';
 import 'package:steadypunpipi_vhack/models/transaction_model.dart';
-import 'package:steadypunpipi_vhack/services/database_services.dart';
 
 class TransactionService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -12,7 +11,7 @@ class TransactionService {
 
     // Fetch income
     final incomeSnapshot = await _firestore
-        .collection(FirestoreCollections.INCOMES)
+        .collection("Income")
         .where("dateTime",
             isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
         .where("dateTime", isLessThanOrEqualTo: Timestamp.fromDate(endDate))
@@ -33,7 +32,7 @@ class TransactionService {
 
     // Fetch expense
     final expenseSnapshot = await _firestore
-        .collection(FirestoreCollections.EXPENSES)
+        .collection("Expense")
         .where("dateTime",
             isGreaterThanOrEqualTo: Timestamp.fromDate(startDate))
         .where("dateTime", isLessThanOrEqualTo: Timestamp.fromDate(endDate))
