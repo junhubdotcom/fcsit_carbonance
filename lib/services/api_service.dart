@@ -9,7 +9,7 @@ import 'package:steadypunpipi_vhack/models/expense_item.dart';
 
 class ApiService {
   final _model = GenerativeModel(
-      model: 'gemini-1.5-pro', apiKey: AppConstants.TRANSACTION_GEMINI_API_KEY);
+      model: 'gemini-1.5-pro', apiKey: AppConstants.GEMINI_API_KEY);
 
   Future<CompleteExpense> generateContent(String imgPath) async {
     try {
