@@ -30,11 +30,15 @@ Carbonance's Virtual Pet feature enhances user engagement in financial and carbo
 
 ### 3. Visualisation and Insights
 
-Carbonance's dashboard visually summarizes user finances and environmental impact with interactive charts of spending categories and AI-driven analysis highlighting trends and unusual expenses. It integrates carbon footprint tracking for each transaction, displayed in real-time charts, and offers AI-powered recommendations for reducing both costs and environmental impact, promoting informed and sustainable choices.
+Carbonance’s dashboard visually summarizes user finances and environmental impact with interactive charts of spending categories and AI-driven analysis highlighting trends and unusual expenses. It integrates real-time carbon footprint tracking for each transaction, displayed in clear charts, and offers AI-powered recommendations for reducing both costs and environmental impact. This ensures that users don't just see their data, but also receive tailored advice that promotes informed and sustainable choices.
 
-### 4. Gamification
+### 4. Carbon Offset
 
-Carbonance gamifies financial management and sustainable living through engaging features. Users set financial goals broken into AI-powered quests (Financial & Sustainability), earning in-app rewards like virtual pet accessories, badges, vouchers, and redeemable Currency upon completion. A Leaderboard fosters friendly competition in saving and carbon reduction (with privacy options and social sharing), while partner collaborations aim to provide real-world value to achievements. This system motivates users to actively pursue their financial and sustainability goals within a supportive and rewarding environment.
+Users are empowered to take tangible action to reduce their footprint. They can participate in Personal Offset by completing green lifestyle missions and challenges, or contribute to Campaign Offset by funding large-scale, verified carbon reduction projects. A discovery page for Green Businesses also encourages conscious consumption. A Leaderboard fosters friendly competition, motivating users to pursue their goals within a supportive and engaging environment.
+
+### 5. Green Finance and Rewards
+
+This feature rewards user commitment, making green choices a part of their life. Green actions earn credits that can be redeemed for Green Rewards—vouchers, discounts, and exclusive offers from sustainable businesses. These credits also unlock access to Green Finance, providing exclusive loans and funds for sustainable investments like electric vehicles and solar panels, turning a user's positive impact into a tangible financial advantage.
 
 ## Get Started
 Follow these steps to set up and run Carbonance
