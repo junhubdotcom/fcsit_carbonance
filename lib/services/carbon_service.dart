@@ -34,7 +34,7 @@ class CarbonService {
       final prompt = """
 Given this transaction titled "${expense.transactionName}" and consisting of these items:
 
-${expenseItems.map((e) => "- ${e.name} (${e.category}), quantity: ${e.quantity}, unit price: ${e.price}").join("\n")}
+${expenseItems.map((e) => "- ${e.name} (${e.category})").join("\n")}
 
 Classify the overall transaction into a single most appropriate Merchant Category Code (MCC), and generate one JSON payload based on this MCC to be used for the Connect Earth API.
 "Only return a valid JSON. No explanation, no formatting, no markdown. Do not use triple backticks."
