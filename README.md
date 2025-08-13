@@ -25,7 +25,11 @@ With Carbonance, financial planning and sustainability go hand in hand, transfor
 
 ### 1. Track
 
-Track helps users understand the environmental impact of their financial habits by making carbon data both visible and actionable. It combines expense and income tracking with carbon footprint logging in a single flow. Users can input data manually or by scanning receipts, while smart AI auto-categorizes each transaction for deeper financial and environmental insights. With Open Banking integration, spending data can be synced automatically from wallets or banks. Carbon emissions are calculated using the formula: kg CO₂e = Emission Factor × Spend Amount, where the emission factor is based on models like EE-MRIO and DSBF, and adjusted by factors such as spending category (MCC), taxes, margins, inflation, region, and currency.
+Track helps users understand the environmental impact of their financial habits by making carbon data both visible and actionable. It combines expense and income tracking with carbon footprint logging in a single workflow. Users can input data manually or by scanning receipts, while smart AI automatically categorizes each transaction for deeper financial and environmental insights. With Open Banking integration, spending data can be synced automatically from wallets or banks. Using the Connect Earth API, carbon emissions are calculated with the formula:
+
+**kg CO₂e = Emission Factor × Spend Amount**
+
+where the emission factor is based on models like EE-MRIO and DSBF, and adjusted for factors such as spending category (MCC), taxes, margins, inflation, region, and currency.
 
 ### 2. View
 
