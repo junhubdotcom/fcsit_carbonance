@@ -56,9 +56,29 @@ class _RecordTransactionState extends State<RecordTransaction> {
     transaction = isExpense
         ? widget.completeExpense?.generalDetails ?? Expense()
         : Income();
-    expenseItems = widget.completeExpense?.items ?? [ExpenseItem()];
+    
+    // Initialize with a single item if no items exist
+    if (widget.completeExpense?.items != null && widget.completeExpense!.items!.isNotEmpty) {
+      // Create new ExpenseItem instances to avoid reference issues
+      expenseItems = List.generate(
+        widget.completeExpense!.items!.length,
+        (index) => ExpenseItem(
+          name: '',
+          category: 'Food',
+          quantity: 1,
+          price: 0.0,
+        ),
+      );
+    } else {
+      expenseItems = [ExpenseItem(
+        name: '',
+        category: 'Food',
+        quantity: 1,
+        price: 0.0,
+      )];
+    }
+    
     isMultipleItem = expenseItems.length > 1 ? true : false;
-    // transaction = Expense();
   }
 
   CarbonService carbonService = CarbonService();
@@ -235,20 +255,33 @@ class _RecordTransactionState extends State<RecordTransaction> {
                                   SmallTitle(title: "Item"),
                                   ItemHeader(),
                                   ...expenseItems.asMap().entries.map((entry) {
-                                    // int index = entry.key;
+                                    int index = entry.key;
                                     ExpenseItem item = entry.value;
                                     return ItemList(
+                                      key: ValueKey('item_$index'), // Add unique key
                                       item: item,
-                                      onNameChanged: (value) =>
-                                          item.name = value!,
-                                      onCategoryChanged: (value) =>
-                                          item.category = value!,
-                                      onQuantityChanged: (value) => item
-                                          .quantity = int.tryParse(value!) ?? 0,
-                                      onPriceChanged: (value) => item.price =
-                                          double.tryParse(value!) ?? 0.0,
+                                      onNameChanged: (value) {
+                                        setState(() {
+                                          item.name = value!;
+                                        });
+                                      },
+                                      onCategoryChanged: (value) {
+                                        setState(() {
+                                          item.category = value!;
+                                        });
+                                      },
+                                      onQuantityChanged: (value) {
+                                        setState(() {
+                                          item.quantity = int.tryParse(value!) ?? 1;
+                                        });
+                                      },
+                                      onPriceChanged: (value) {
+                                        setState(() {
+                                          item.price = double.tryParse(value!) ?? 0.0;
+                                        });
+                                      },
                                     );
-                                  }),
+                                  }).toList(), // Convert to list
                                   Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
@@ -256,7 +289,17 @@ class _RecordTransactionState extends State<RecordTransaction> {
                                       ItemButton(
                                         onPressed: () {
                                           setState(() {
-                                            expenseItems.add(ExpenseItem());
+                                            // Create a completely new ExpenseItem instance
+                                            final newItem = ExpenseItem(
+                                              name: '',
+                                              category: 'Food',
+                                              quantity: 1,
+                                              price: 0.0,
+                                            );
+                                            // Add to the list
+                                            expenseItems.add(newItem);
+                                            // Update the multiple item flag
+                                            isMultipleItem = expenseItems.length > 1;
                                           });
                                         },
                                         icon: Icons.add,
@@ -264,7 +307,12 @@ class _RecordTransactionState extends State<RecordTransaction> {
                                       ItemButton(
                                         onPressed: () {
                                           setState(() {
-                                            expenseItems.removeLast();
+                                            // Only remove if there's more than one item
+                                            if (expenseItems.length > 1) {
+                                              expenseItems.removeLast();
+                                              // Update the multiple item flag
+                                              isMultipleItem = expenseItems.length > 1;
+                                            }
                                           });
                                         },
                                         icon: Icons.remove,
@@ -278,20 +326,29 @@ class _RecordTransactionState extends State<RecordTransaction> {
                                   SmallTitle(title: "Item"),
                                   ItemHeader(),
                                   ItemList(
+                                    key: ValueKey('single_item'), // Add unique key
                                     item: expenseItems.first,
                                     onNameChanged: (value) {
-                                      expenseItems.first.name = value!;
+                                      setState(() {
+                                        expenseItems.first.name = value!;
+                                      });
                                     },
                                     onCategoryChanged: (value) {
-                                      expenseItems.first.category = value!;
+                                      setState(() {
+                                        expenseItems.first.category = value!;
+                                      });
                                     },
                                     onPriceChanged: (value) {
-                                      expenseItems.first.price =
-                                          double.tryParse(value!) ?? 0;
+                                      setState(() {
+                                        expenseItems.first.price =
+                                            double.tryParse(value!) ?? 0.0;
+                                      });
                                     },
                                     onQuantityChanged: (value) {
-                                      expenseItems.first.quantity =
-                                          int.tryParse(value!) ?? 0;
+                                      setState(() {
+                                        expenseItems.first.quantity =
+                                            int.tryParse(value!) ?? 1;
+                                      });
                                     },
                                   )
                                 ],
@@ -485,6 +542,12 @@ class _RecordTransactionState extends State<RecordTransaction> {
                     button_text: "Done",
                     onPressed: () async {
                       if (isExpense) {
+                        // Debug: Print current expense items
+                        print('🔍 DEBUG: Saving ${expenseItems.length} expense items');
+                        for (int i = 0; i < expenseItems.length; i++) {
+                          print('🔍 DEBUG: Item $i - Name: ${expenseItems[i].name}, Category: ${expenseItems[i].category}, Quantity: ${expenseItems[i].quantity}, Price: ${expenseItems[i].price}');
+                        }
+                        
                         for (ExpenseItem item in expenseItems) {
                           if (item.name.isEmpty ||
                               item.category.isEmpty ||
