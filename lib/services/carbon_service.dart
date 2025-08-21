@@ -17,6 +17,7 @@ class CarbonService {
 
   Future<void> generateCarbonApiJson(Expense expense, List<ExpenseItem> expenseItems) async {
     Map<String, dynamic> transaction = {};
+    print("CARBON_API_KEY: '${AppConstants.CARBON_API_KEY}'");
 
     //fetch the ExpenseItem objects from DB using IDs
     

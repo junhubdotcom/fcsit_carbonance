@@ -141,7 +141,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                                                     .toString()
                                                 : expenseItems.first.name
                                                     .toString()
-                                            : transaction.name,
+                                            : transaction.transactionName,
                                         style: GoogleFonts.quicksand(
                                             textStyle: TextStyle(
                                                 fontWeight: FontWeight.w900,

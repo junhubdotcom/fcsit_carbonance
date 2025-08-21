@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:steadypunpipi_vhack/models/expense.dart';
 import 'package:steadypunpipi_vhack/models/expense_item.dart';
+import 'package:steadypunpipi_vhack/models/income.dart';
 import 'package:steadypunpipi_vhack/screens/transaction/transaction_details.dart';
 import 'package:steadypunpipi_vhack/services/database_services.dart';
 import 'package:steadypunpipi_vhack/utils/category_utils.dart';
@@ -10,10 +11,12 @@ import 'package:steadypunpipi_vhack/widgets/transaction_widgets/label.dart';
 
 class TransactionContainer extends StatefulWidget {
   final String transactionId;
+  final String transactionType; // 'expense' or 'income'
 
   const TransactionContainer({
     super.key,
     required this.transactionId,
+    required this.transactionType,
   });
 
   @override
@@ -26,6 +29,7 @@ class _TransactionContainerState extends State<TransactionContainer> {
   bool isMounted = false;
   late dynamic transaction;
   List<ExpenseItem> expenseItems = [];
+  Income? income;
 
   @override
   void initState() {
@@ -35,7 +39,12 @@ class _TransactionContainerState extends State<TransactionContainer> {
   }
 
   void initData() async {
-    await _fetchExpenses(widget.transactionId);
+    if (widget.transactionType == 'expense') {
+      await _fetchExpenses(widget.transactionId);
+    } else {
+      await _fetchIncome(widget.transactionId);
+    }
+    
     if (isMounted) {
       setState(() {
         isLoading = false;
@@ -68,6 +77,20 @@ class _TransactionContainerState extends State<TransactionContainer> {
     }
   }
 
+  Future<void> _fetchIncome(String transactionId) async {
+    if (isLoading) {
+      print('🔍 DEBUG: Fetching income with ID: $transactionId');
+      income = await db.getIncome(transactionId);
+      if (income != null) {
+        income!.id = transactionId; // Ensure ID is set
+        transaction = income; // Set transaction to income for consistency
+        print('🔍 DEBUG: Income loaded - Name: ${income!.transactionName}, Amount: ${income!.amount}, Category: ${income!.category}');
+      } else {
+        print('🔍 DEBUG: No income found for ID: $transactionId');
+      }
+    }
+  }
+
   List<String> getUniqueCategories() {
     final categorySet = <String>{};
     for (final item in expenseItems) {
@@ -79,26 +102,80 @@ class _TransactionContainerState extends State<TransactionContainer> {
   }
 
   Widget buildCategoryLabels() {
-    final categories = getUniqueCategories();
-    return Wrap(
-      spacing: 6,
-      runSpacing: 3,
-      children: categories.map((category) {
-        return Label(
-          color: getCategoryColor(category),
-          icon: getCategoryIcon(category),
-          text: category,
-        );
-      }).toList(),
-    );
+    if (widget.transactionType == 'income') {
+      // For income, show category label
+      return Label(
+        color: getCategoryColor(income?.category ?? 'Income'),
+        icon: getCategoryIcon(income?.category ?? 'Income'),
+        text: income?.category ?? 'Income',
+      );
+    } else {
+      // For expenses, show multiple category labels
+      final categories = getUniqueCategories();
+      return Wrap(
+        spacing: 6,
+        runSpacing: 3,
+        children: categories.map((category) {
+          return Label(
+            color: getCategoryColor(category),
+            icon: getCategoryIcon(category),
+            text: category,
+          );
+        }).toList(),
+      );
+    }
   }
 
   double calculateTotalCost() {
-    double totalCost = 0;
-    for (final item in expenseItems) {
-      totalCost += item.price;
+    if (widget.transactionType == 'income') {
+      return income?.amount ?? 0.0;
+    } else {
+      double totalCost = 0;
+      for (final item in expenseItems) {
+        totalCost += item.price;
+      }
+      return totalCost;
     }
-    return totalCost;
+  }
+
+  String getTransactionName() {
+    if (widget.transactionType == 'income') {
+      return income?.transactionName ?? 'Income';
+    } else {
+      return (transaction.transactionName != null &&
+              transaction.transactionName!.isNotEmpty)
+          ? transaction.transactionName
+          : expenseItems.isNotEmpty &&
+                  expenseItems[0].name.isNotEmpty
+              ? expenseItems[0].name
+              : "No Transaction Name";
+    }
+  }
+
+  String getPaymentMethod() {
+    if (widget.transactionType == 'income') {
+      return income?.paymentMethod ?? 'Unknown';
+    } else {
+      return transaction.paymentMethod ?? 'Unknown';
+    }
+  }
+
+  double getCarbonFootprint() {
+    if (widget.transactionType == 'income') {
+      return 0.0; // Income typically has no carbon footprint
+    } else {
+      return transaction.carbonFootprint ?? 0.0;
+    }
+  }
+
+  Color getAmountColor() {
+    return widget.transactionType == 'income' 
+        ? Color(0xff58c849) // Green for income
+        : Color(0xffcd5151); // Red for expense
+  }
+
+  String getAmountPrefix() {
+    return widget.transactionType == 'income' ? '+' : '-';
   }
 
   @override
@@ -112,7 +189,7 @@ class _TransactionContainerState extends State<TransactionContainer> {
                 MaterialPageRoute(
                   builder: (context) => TransactionDetails(
                     transactionId: widget.transactionId,
-                    isExpense: true,
+                    isExpense: widget.transactionType == 'expense',
                     fromForm: false,
                   ),
                 ),
@@ -122,7 +199,9 @@ class _TransactionContainerState extends State<TransactionContainer> {
               margin: EdgeInsets.symmetric(vertical: 5),
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xffe5ecdd),
+                color: widget.transactionType == 'income' 
+                    ? Color(0xffe8f5e8) // Lighter green for income
+                    : Color(0xffe5ecdd), // Original color for expense
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
@@ -139,13 +218,7 @@ class _TransactionContainerState extends State<TransactionContainer> {
                           Text(
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            (transaction.transactionName != null &&
-                                    transaction.transactionName!.isNotEmpty)
-                                ? transaction.transactionName
-                                : expenseItems.isNotEmpty &&
-                                        expenseItems[0].name.isNotEmpty
-                                    ? expenseItems[0].name
-                                    : "No Transaction Name",
+                            getTransactionName(),
                             style: GoogleFonts.quicksand(
                               color: Colors.black,
                               fontSize: 16,
@@ -153,7 +226,7 @@ class _TransactionContainerState extends State<TransactionContainer> {
                             ),
                           ),
                           Text(
-                            transaction.paymentMethod,
+                            getPaymentMethod(),
                             style: GoogleFonts.quicksand(
                               color: Colors.black,
                               fontSize: 12,
@@ -161,32 +234,32 @@ class _TransactionContainerState extends State<TransactionContainer> {
                             ),
                           ),
                           SizedBox(height: 4),
-                          
                         ],
                       ),
                   
                       SizedBox(width: 12),
                   
-                      /// Right side: total cost and carbon emission
+                      /// Right side: total amount and carbon emission
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '-RM${calculateTotalCost().toStringAsFixed(2)}',
+                            '${getAmountPrefix()}RM${calculateTotalCost().toStringAsFixed(2)}',
                             style: GoogleFonts.quicksand(
-                              color: Colors.black,
+                              color: getAmountColor(),
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
-                          Text(
-                            '+${transaction.carbonFootprint.toStringAsFixed(2)}kg C02e',
-                            style: GoogleFonts.quicksand(
-                              color: Colors.black,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w800,
+                          if (widget.transactionType == 'expense') // Only show carbon for expenses
+                            Text(
+                              '+${getCarbonFootprint().toStringAsFixed(2)}kg C02e',
+                              style: GoogleFonts.quicksand(
+                                color: Colors.black,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                       
