@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:steadypunpipi_vhack/common/constants.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:steadypunpipi_vhack/screens/onboarding_screen.dart';
@@ -13,11 +14,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load dotenv
+  String? geminiApiKey;
   try {
     await dotenv.load(fileName: ".env");
+    geminiApiKey = dotenv.env['GEMINI_API_KEY'];
     print('✅ DEBUG: .env file loaded successfully');
+    if (geminiApiKey != null && geminiApiKey.isNotEmpty) {
+      print('✅ DEBUG: Gemini API key found');
+    } else {
+      print('⚠️ DEBUG: Gemini API key is empty or null');
+    }
   } catch (e) {
     print('⚠️ DEBUG: .env file not found, using default values');
+    geminiApiKey = null;
   }
 
   await Firebase.initializeApp(
@@ -25,7 +34,15 @@ void main() async {
   );
   FirebaseFirestore.instance.settings =
       const Settings(persistenceEnabled: true);
-  Gemini.init(apiKey: dotenv.env['GEMINI_API_KEY'] ?? '');
+  
+  // Only initialize Gemini if we have a valid API key
+  if (geminiApiKey != null && geminiApiKey.isNotEmpty) {
+    Gemini.init(apiKey: geminiApiKey);
+    print('✅ DEBUG: Gemini initialized successfully');
+  } else {
+    print('⚠️ DEBUG: Gemini not initialized - no valid API key');
+  }
+  
   runApp(MyApp());
 }
 

@@ -33,7 +33,7 @@ class ItemContainer extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  transactionItem.transactionName ,
+                  isExpense? transactionItem.name : transactionItem.transactionName ,
                   style: GoogleFonts.quicksand(
                     fontWeight: FontWeight.w700, 
                     fontSize: 15

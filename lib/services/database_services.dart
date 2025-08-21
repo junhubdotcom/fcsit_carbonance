@@ -17,8 +17,9 @@ class DatabaseService {
     final formattedDate =
         "${dateTime.year}${dateTime.month.toString().padLeft(2, '0')}${dateTime.day.toString().padLeft(2, '0')}";
     final formattedTime =
-        "${dateTime.hour.toString().padLeft(2, '0')}${dateTime.minute.toString().padLeft(2, '0')}";
-    return "${prefix}_${formattedDate}${formattedTime}";
+        "${dateTime.hour.toString().padLeft(2, '0')}${dateTime.minute.toString().padLeft(2, '0')}${dateTime.second.toString().padLeft(2, '0')}";
+    final formattedMicroseconds = dateTime.microsecond.toString().padLeft(6, '0');
+    return "${prefix}_${formattedDate}${formattedTime}${formattedMicroseconds}";
   }
 
   CollectionReference<Expense> get expensesCollection =>
@@ -187,6 +188,7 @@ class DatabaseService {
       ExpenseItem expenseItem) async {
     try {
       final now = DateTime.now();
+      // Use microsecond precision to ensure unique document names
       final documentName = _generateDocumentName("item", now);
 
       await expenseItemsCollection.doc(documentName).set(expenseItem);
