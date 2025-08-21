@@ -11,7 +11,17 @@ import 'package:steadypunpipi_vhack/services/database_services.dart';
 
 class CarbonService {
   final _model = GenerativeModel(
-      model: "gemini-1.5-pro", apiKey: AppConstants.TRANSACTION_GEMINI_API_KEY);
+      model: "gemini-1.5-pro", apiKey: AppConstants.GEMINI_API_KEY);
+
+  // Base URL for Connect Earth API
+  static const String _baseUrl = 'https://api.connect.earth';
+
+  // Headers for API requests
+  Map<String, String> get _headers => {
+        'x-api-key': AppConstants.CARBON_API_KEY,
+        'Content-Type': 'application/json',
+      };
+
   // DatabaseService db = DatabaseService();
   // List<ExpenseItem> expenseItems = [];
 
@@ -68,7 +78,7 @@ Example response:
   Future<void> sendToCarbonApi(
       Map<String, dynamic> transaction, Expense expense) async {
     const String url = 'https://api.connect.earth/transaction';
-    const Map<String, String> headers = {
+    final Map<String, String> headers = {
       'x-api-key': AppConstants.CARBON_API_KEY,
       'Content-Type': 'application/json',
     };

@@ -14,6 +14,7 @@ import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/loading.dart';
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/summary_section.dart';
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/tips_section.dart';
 import 'package:steadypunpipi_vhack/widgets/dashboard_widgets/trend_section.dart';
+import 'package:steadypunpipi_vhack/screens/dashboard/new_dashboard.dart';
 
 class DashboardPage extends StatefulWidget {
   @override
@@ -182,6 +183,16 @@ class _DashboardPageState extends State<DashboardPage> {
           IconButton(
             onPressed: () {},
             icon: Icon(Icons.share),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NewDashboardPage()),
+              );
+            },
+            icon: Icon(Icons.science),
+            tooltip: 'Try V1 Dashboard',
           ),
         ],
       ),

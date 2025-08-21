@@ -12,6 +12,15 @@ const String EXPENSE_ITEM_COLLECTION_REF = "expenseItem";
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// Generate a datetime-based document name for better tracking
+  String _generateDocumentName(String prefix, DateTime dateTime) {
+    final formattedDate =
+        "${dateTime.year}${dateTime.month.toString().padLeft(2, '0')}${dateTime.day.toString().padLeft(2, '0')}";
+    final formattedTime =
+        "${dateTime.hour.toString().padLeft(2, '0')}${dateTime.minute.toString().padLeft(2, '0')}";
+    return "${prefix}_${formattedDate}${formattedTime}";
+  }
+
   CollectionReference<Expense> get expensesCollection =>
       _firestore.collection(EXPENSE_COLLECTION_REF).withConverter<Expense>(
           fromFirestore: (snapshots, _) => Expense.fromJson(
@@ -100,7 +109,20 @@ class DatabaseService {
   }
 
   Future<DocumentReference<Expense>> addExpense(Expense expense) async {
-    return await expensesCollection.add(expense);
+    try {
+      final now = DateTime.now();
+      final documentName = _generateDocumentName("expense", now);
+
+      await expensesCollection.doc(documentName).set(expense);
+
+      print("✅ Expense saved at: ${expensesCollection.doc(documentName).path}");
+      print("📄 Document: $documentName");
+
+      return expensesCollection.doc(documentName);
+    } catch (e) {
+      print("❌ Error saving expense: $e");
+      rethrow;
+    }
   }
 
   Future<void> updateExpense(String expenseId, Expense expense) async {
@@ -131,7 +153,20 @@ class DatabaseService {
   }
   //Income
   Future<DocumentReference<Income>> addIncome(Income income) async {
-    return await incomesCollection.add(income);
+    try {
+      final now = DateTime.now();
+      final documentName = _generateDocumentName("income", now);
+
+      await incomesCollection.doc(documentName).set(income);
+
+      print("✅ Income saved at: ${incomesCollection.doc(documentName).path}");
+      print("📄 Document: $documentName");
+
+      return incomesCollection.doc(documentName);
+    } catch (e) {
+      print("❌ Error saving income: $e");
+      rethrow;
+    }
   }
 
   Future<void> updateIncome(String incomeId, Income income) async {
@@ -150,7 +185,21 @@ class DatabaseService {
   //Expense Item
   Future<DocumentReference<ExpenseItem>> addExpenseItem(
       ExpenseItem expenseItem) async {
-    return await expenseItemsCollection.add(expenseItem);
+    try {
+      final now = DateTime.now();
+      final documentName = _generateDocumentName("item", now);
+
+      await expenseItemsCollection.doc(documentName).set(expenseItem);
+
+      print(
+          "✅ Expense item saved at: ${expenseItemsCollection.doc(documentName).path}");
+      print("📄 Document: $documentName");
+
+      return expenseItemsCollection.doc(documentName);
+    } catch (e) {
+      print("❌ Error saving expense item: $e");
+      rethrow;
+    }
   }
 
   Future<ExpenseItem?> getExpenseItem(String expenseItemId) async {

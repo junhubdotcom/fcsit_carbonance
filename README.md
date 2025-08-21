@@ -1,43 +1,50 @@
 # Carbonance
 
-"Money Matters. So does the planet"
+A Personal Finance and Carbon Footprint Manager Application
 
 ## Overview 
 
-Carbonance, a smart budgeting tool that delivers "Track Once, See More" insights—combining financial tracking with carbon footprint analysis in a single step. By automatically linking financial transactions with their environmental impact, users can effortlessly monitor both their spending habits and emissions without additional effort. Beyond tracking, the app provides personalized recommendations, helping users make informed choices to reduce their carbon footprint while maintaining financial goals. With Carbonance, financial planning and sustainability go hand in hand, empowering individuals to make smarter, eco-conscious
-spending decisions without disrupting their daily routines.
+Carbonance is no longer just a smart budgeting tool; it is a comprehensive financial and sustainability platform. It delivers on the promise of "Track Once, See More" by combining financial tracking with carbon footprint analysis in a single, effortless step. By automatically linking financial transactions with their environmental impact, users can effortlessly monitor both their spending habits and emissions.
+
+Beyond tracking and insights, Carbonance empowers users to take direct action. Through a variety of offsetting options—from completing green lifestyle missions to contributing to verified carbon reduction campaigns—users can turn their insights into tangible impact.
+
+But the app's mission extends further. Carbonance rewards a user's commitment with Green Finance, where green actions earn valuable credits that can unlock access to loans and funds for sustainable investments like electric vehicles and solar panels.
+
+With Carbonance, financial planning and sustainability go hand in hand, transforming daily routines into a rewarding journey toward a greener future, without ever disrupting your life.
 
 ## Showcases
 | Key Features  | Demonstration |
 | :---:  | :---: |
-| Smart Expense and Carbon Tracker |<img src="https://github.com/user-attachments/assets/7f355063-1ec2-4297-acc4-0924fa7caa10" height="300"> <img src="https://github.com/user-attachments/assets/02dea934-9077-40b0-be40-3f8f4c63f1ac" height="300"> <img src="https://github.com/user-attachments/assets/df9c1bb8-8290-4226-86df-83ee9b459a94" height="300"> |
-| Smart Receipt Scanning | <img src="https://github.com/user-attachments/assets/61d57ff0-f021-4124-8a8e-697b066c714f" height="300"> <img src="https://github.com/user-attachments/assets/3c942ca6-223c-4ad4-b3bd-2cfedb73453a" height="300"> <img src="https://github.com/user-attachments/assets/3d00abc6-9e06-4d53-9123-c8879a5f6afb" height="300"> |
-| Dashboard	 | <img src="https://github.com/user-attachments/assets/dbdf0294-2b6d-45ad-bc15-abec09f20e23" height="300"> |
-| Predictive Analysis and Recommendations | <img src="https://github.com/user-attachments/assets/9249e3de-c98e-4b78-93cf-4a5a377f0f8a" height="300"> <img src="https://github.com/user-attachments/assets/8d458405-24b5-4845-9c44-aae999a032b3" height="300"> |
-| Virtual Pet Assistant | <img src="https://github.com/user-attachments/assets/bb9a7b9f-bab0-413f-b644-de0741e69359" height="300"> <img src="https://github.com/user-attachments/assets/60fe4313-0619-4adb-816d-9cf975140560" height="300"> <img src="https://github.com/user-attachments/assets/d3d11ece-e7fa-4ed5-bafd-afa03a227630" height="300"> |
-| Gamification Mission and Rewards | <img src="https://github.com/user-attachments/assets/51b790fd-c5e5-42dc-803c-924542971e21" height="300"> <img src="https://github.com/user-attachments/assets/965835d0-3c80-47b1-9550-2e2362b4374c" height="300"> <img src="https://github.com/user-attachments/assets/876d75bf-95c9-4c18-94b9-ba978a945a18" height="300"> |
-| Interactive Profile | <img src="https://github.com/user-attachments/assets/61dc5892-1ec9-43bb-b880-0e79dc78cf3d" height="300"> |
+| Track |<img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track1.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track2.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track3.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track4.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track5.png" height="300"><img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track6.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track7.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/track8.png" height="300">  |
+| View | <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/view1.png" height="300">  <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/view2.png" height="300">  <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/view3.png" height="300">  |
+| Act | <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Act1.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Act2.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Act3.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Act4.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Act5.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Act6.png" height="300"> |
+| Impact | <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Impact1.png" height="300"> <img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Impact2.png" height="300"><img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Impact3.png" height="300"><img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Impact4.png" height="300"><img src="https://github.com/LJoeYing1013/CarbonanceUI/blob/87259ff14fc2f9a1e286e965405e65efd55abba9/Impact5.png" height="300">  |
+
 
 ## Features
 
-### 1. Smart Expense and Carbon Tracker
+### 1. Track
 
-Carbonance offers users a seamless solution to track daily expenses (bills, groceries, transport) with automatic categorization and date sorting, uniquely integrating carbon footprint analysis for each transaction. Utilizing Gemini AI and the Connect Earth API, the app calculates and logs the environmental impact alongside financial data, empowering users to understand their spending and its carbon footprint. Carbonance provides flexible logging through text, image, voice command via a virtual pet, automatic bank and e-wallet (TNG, GrabPay) sync, AI-powered receipt scanning with Google Vision, and manual entry, enriched with details like images, location, time, and payment method to facilitate informed financial and sustainable choices.
+Track helps users understand the environmental impact of their financial habits by making carbon data both visible and actionable. It combines expense and income tracking with carbon footprint logging in a single workflow. Users can input data manually or by scanning receipts, while smart AI automatically categorizes each transaction for deeper financial and environmental insights. With Open Banking integration, spending data can be synced automatically from wallets or banks. Using the Connect Earth API, carbon emissions are calculated with the formula:
 
-### 2. Virtual Pet
+**kg CO₂e = Emission Factor × Spend Amount**
 
-Carbonance's Virtual Pet feature enhances user engagement in financial and carbon footprint management through an interactive AI assistant powered by Gemini API. This customizable digital companion delivers daily, personalized financial insights, spending analysis, and eco-friendly suggestions via an engaging chat interface. Users can also seamlessly log expenses and access other app features using natural language or picture input to the pet. To increase user stickiness, the pet offers personalization options with unlockable wardrobe items earned by completing quests focused on responsible financial habits and eco-conscious actions, transforming expense tracking into a more interactive and rewarding experience.
+where the emission factor is based on models like EE-MRIO and DSBF, and adjusted for factors such as spending category (MCC), taxes, margins, inflation, region, and currency.
 
-### 3. Visualisation and Insights
+### 2. View
 
-Carbonance's dashboard visually summarizes user finances and environmental impact with interactive charts of spending categories and AI-driven analysis highlighting trends and unusual expenses. It integrates carbon footprint tracking for each transaction, displayed in real-time charts, and offers AI-powered recommendations for reducing both costs and environmental impact, promoting informed and sustainable choices.
+View transforms the user's logged transactions and activities into clear, easy-to-understand carbon reports, making their environmental impact more transparent. It also delivers personalized and actionable recommendations based on the user's spending and lifestyle patterns, guiding them toward smarter, greener choices.
 
-### 4. Gamification
+### 3. Act
 
-Carbonance gamifies financial management and sustainable living through engaging features. Users set financial goals broken into AI-powered quests (Financial & Sustainability), earning in-app rewards like virtual pet accessories, badges, vouchers, and redeemable Currency upon completion. A Leaderboard fosters friendly competition in saving and carbon reduction (with privacy options and social sharing), while partner collaborations aim to provide real-world value to achievements. This system motivates users to actively pursue their financial and sustainability goals within a supportive and rewarding environment.
+Act empowers users to take meaningful steps toward offsetting their carbon footprint. Through campaign offsets, users can support large-scale, verified carbon reduction projects. Personal offsets encourage greener lifestyles by completing eco-focused missions and challenges. Additionally, users can drive sustainable change by choosing to shop with environmentally responsible businesses and brands.
+
+### 4. Impact
+
+Impact encourages users to make green choices a natural part of everyday life by connecting financial decisions with sustainability. Through green finance, users can access eco-friendly funds and loans that support environmental initiatives. Green rewards offer discounts and incentives for choosing low-carbon products and services, making sustainable living easier and more rewarding.
 
 ## Get Started
-Follow these steps to set up and run The Watcher.
+Follow these steps to set up and run Carbonance
 
 ### 1. Prerequisites
 Before proceeding, ensure you have the following installed:  
@@ -48,8 +55,8 @@ Before proceeding, ensure you have the following installed:
 ### 2. Clone the Repository
 Clone the project from your GitHub.
 ```
-- git clone https://github.com/junhubdotcom/steadypunpipi_kithack.git
-- cd steadypunpipi_kithack
+- git clone https://github.com/junhubdotcom/fcsit_carbonance.git
+- cd fcsit_carbonance
 ```
 
 ### 3. Set Up the Flutter Frontend
