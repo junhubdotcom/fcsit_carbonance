@@ -14,7 +14,8 @@ class UserData {
 
   // User Profile Data
   String name = 'Sze Kai'; // User's name
-  NetworkImage avatarUrl = NetworkImage('https://i.pravatar.cc/150?img=9'); // User's avatar URL
+  NetworkImage avatarUrl =
+      NetworkImage('https://i.pravatar.cc/150?img=9'); // User's avatar URL
 
   // Daily Check-in Data
   int checkedInDays = 0; // Tracks how many consecutive days user checked in
@@ -22,7 +23,8 @@ class UserData {
 
   // Gameplay Data
   int experience = 150; // Current experience points
-  int level = 1; // Current level
+  int get level =>
+      (totalPoints / 1000).floor() + 1; // Current level calculated from points
   int totalPoints = 150; // Current points balance
   String title = 'Rising Star'; // User's title
   int rank = 4; // User's rank in the leaderboard
@@ -103,7 +105,8 @@ class FinancialGoal {
     required this.rewards,
   });
 
-  String get progressText => '${savedAmount.toStringAsFixed(2)} / ${targetAmount.toStringAsFixed(2)}';
+  String get progressText =>
+      '${savedAmount.toStringAsFixed(2)} / ${targetAmount.toStringAsFixed(2)}';
 }
 
 class SustainableQuest {

@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConstants {
   // 🌟 App-wide values
-  static const String appName = "Expense Tracker";
+  static const String appName = "Carbonance";
   static const String currency = "MYR";
 
   // 🌐 API Endpoints
   static const String baseUrl = "https://api.yourserver.com";
   static const String transactionsEndpoint = "$baseUrl/transactions";
   static const String carbonEndpoint = "$baseUrl/carbon";
-  static const String GEMINI_API_KEY =
-      "AIzaSyDvgydDIgm2BnHGmzghqGIQSgzvRitkDkA";
-  static const String GOOGLE_VISION_API_KEY =
-      "AIzaSyCQx91CIStt3gfZBAVvAXqIl76dhVhfwro";
-  static const String TRANSACTION_GEMINI_API_KEY =
-      "AIzaSyAeFUO1ZZgTOkF4NUW3F4_tB3w06-lkWlw";
-  static const String CARBON_API_KEY =
-      "385950baffe43ee29d2238d0ce92dc23f55bbc6934a39b109bc0399f640f4af3be46dfb7d0112808796abc4453c4247544652c9e0ac32d0ccbf19de73dd64286";
+
+  // API Keys - Load from dotenv
+  static String get GEMINI_API_KEY => dotenv.env['GEMINI_API_KEY'] ?? '';
+  static String get GOOGLE_VISION_API_KEY =>
+      dotenv.env['GOOGLE_VISION_API_KEY'] ?? '';
+  static String get CARBON_API_KEY => dotenv.env['CARBON_API_KEY'] ?? '';
 
   // 🎨 Color Palette (Light Theme)
   static const Color primaryColor = Color(0xFF4CAF50);

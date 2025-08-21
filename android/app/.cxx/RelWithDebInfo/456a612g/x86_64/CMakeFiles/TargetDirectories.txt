@@ -1,0 +1,2 @@
+C:/Users/furno/Desktop/New folder/kitahack/fcsit_carbonance/android/app/.cxx/RelWithDebInfo/456a612g/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/furno/Desktop/New folder/kitahack/fcsit_carbonance/android/app/.cxx/RelWithDebInfo/456a612g/x86_64/CMakeFiles/rebuild_cache.dir
