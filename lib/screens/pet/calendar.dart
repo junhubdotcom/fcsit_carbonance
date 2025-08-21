@@ -157,7 +157,9 @@ class _CalendarPetState extends State<CalendarPet> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8.0, vertical: 0),
                     child: TransactionContainer(
-                        transactionId: transactionList[index].id ?? "",),
+                        transactionId: transactionList[index].id ?? "",
+                        transactionType: 'expense',
+                    ),
                   );
                 },
               );

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Income {
   String? id; 
-  String name;
+  String transactionName;
   String category;
   double amount;
   String paymentMethod;
@@ -12,7 +12,7 @@ class Income {
 
   Income({
     this.id, // Optional: to store the document ID if needed
-    this.name = '',
+    this.transactionName = '',
     this.category = 'Salary',
     this.amount = 0.00,
     this.paymentMethod = 'Cash', // Default method
@@ -25,7 +25,7 @@ class Income {
   Map<String, dynamic> toJson() {
     return {
       'id':id,
-      'name': name,
+      'name': transactionName,
       'category': category,
       'amount': amount,
       'paymentMethod': paymentMethod,
@@ -39,7 +39,7 @@ class Income {
   factory Income.fromJson(Map<String, dynamic> json) {
     return Income(
       id: json['id'], // Optional: to store the document ID if needed
-      name: json['name'] ?? '',
+      transactionName: json['name'] ?? '',
       category: json['category'] ?? 'Salary',
       amount: (json['amount'] ?? 0).toDouble(),
       paymentMethod: json['paymentMethod'] ?? 'Bank Transfer',

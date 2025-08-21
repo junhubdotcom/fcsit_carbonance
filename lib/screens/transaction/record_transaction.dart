@@ -108,7 +108,7 @@ class _RecordTransactionState extends State<RecordTransaction> {
 
   Future<DateTime?> pickDate() => showDatePicker(
         context: context,
-        initialDate: transaction.dateTime,
+        initialDate: transaction.dateTime.toDate(),
         firstDate: DateTime(1900),
         lastDate: DateTime(2100),
       );
@@ -116,8 +116,8 @@ class _RecordTransactionState extends State<RecordTransaction> {
   Future<TimeOfDay?> pickTime() => showTimePicker(
       context: context,
       initialTime: TimeOfDay(
-        hour: transaction.dateTime.hour,
-        minute: transaction.dateTime.minute,
+        hour: transaction.dateTime.toDate().hour,
+        minute: transaction.dateTime.toDate().minute,
       ));
 
   Future<DocumentReference<Expense>> saveExpense(
@@ -323,9 +323,9 @@ class _RecordTransactionState extends State<RecordTransaction> {
                                   flex: 2,
                                   child: TransactionTextfield(
                                     onChanged: (value) {
-                                      transaction.name = value!;
+                                      transaction.transactionName = value!;
                                     },
-                                    value: transaction.name,
+                                    value: transaction.transactionName,
                                   )),
                               SizedBox(width: 5),
                               Expanded(

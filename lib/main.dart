@@ -25,7 +25,7 @@ void main() async {
   );
   FirebaseFirestore.instance.settings =
       const Settings(persistenceEnabled: true);
-  Gemini.init(apiKey: AppConstants.GEMINI_API_KEY);
+  Gemini.init(apiKey: dotenv.env['GEMINI_API_KEY'] ?? '');
   runApp(MyApp());
 }
 
