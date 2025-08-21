@@ -56,6 +56,7 @@ flutter:
     - assets/images/hats/
     - assets/images/backgrounds/
     - assets/images/offset/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
