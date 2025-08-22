@@ -31,8 +31,17 @@ class ApiService {
       Expense expense = await generateGeneralContent(imgPath, visionResult!);
       List<ExpenseItem> expenseItems =
           await generateItemContent(imgPath, visionResult);
+      
+      print('🔍 DEBUG: Generated expense: ${expense.transactionName}');
+      print('🔍 DEBUG: Generated ${expenseItems.length} items');
+      for (int i = 0; i < expenseItems.length; i++) {
+        print('🔍 DEBUG: Item $i: ${expenseItems[i].name} (${expenseItems[i].category}) x${expenseItems[i].quantity} @RM${expenseItems[i].price}');
+      }
+      
       final CompleteExpense completeExpense =
-          CompleteExpense(generalDetails: expense, items: expenseItems);
+          CompleteExpense.fromScannedReceipt(expense.toJson(), expenseItems);
+      
+      print('🔍 DEBUG: CompleteExpense created with ${completeExpense.items.length} items');
       return completeExpense;
     } catch (e) {
       throw Exception('Error generating content: $e');

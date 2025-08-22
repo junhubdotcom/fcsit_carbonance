@@ -59,6 +59,7 @@ class _NewDashboardPageState extends State<NewDashboardPage>
       return Scaffold(
         backgroundColor: Color(0xFFFAFBFF),
         appBar: AppBar(
+          automaticallyImplyLeading: false, // Remove default back button
           title: Text('Dashboard',
               style: GoogleFonts.quicksand(
                   fontSize: 24, fontWeight: FontWeight.bold)),
@@ -85,6 +86,7 @@ class _NewDashboardPageState extends State<NewDashboardPage>
     return Scaffold(
       backgroundColor: Color(0xFFFAFBFF),
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Remove default back button
         title: Text('Dashboard',
             style: GoogleFonts.quicksand(
                 fontSize: 24, fontWeight: FontWeight.bold)),

@@ -35,6 +35,7 @@ class RecordTransaction extends StatefulWidget {
 class _RecordTransactionState extends State<RecordTransaction> {
   late bool isExpense;
   late bool isMultipleItem;
+  bool _isProcessing = false; // Add loading state
 
   // can be expense and also income, depends on the button that user clicked
   late dynamic transaction;
@@ -53,32 +54,45 @@ class _RecordTransactionState extends State<RecordTransaction> {
   void initState() {
     super.initState();
     isExpense = true;
+    
+    // Debug: Check what completeExpense contains
+    if (widget.completeExpense != null) {
+      print('🔍 DEBUG: completeExpense received:');
+      print('🔍 DEBUG: - generalDetails: ${widget.completeExpense!.generalDetails.transactionName}');
+      print('🔍 DEBUG: - items count: ${widget.completeExpense!.items.length}');
+      for (int i = 0; i < widget.completeExpense!.items.length; i++) {
+        final item = widget.completeExpense!.items[i];
+        print('🔍 DEBUG: - Item $i: ${item.name} (${item.category}) x${item.quantity} @RM${item.price}');
+      }
+    } else {
+      print('🔍 DEBUG: No completeExpense provided');
+    }
+    
     transaction = isExpense
         ? widget.completeExpense?.generalDetails ?? Expense()
         : Income();
     
-    // Initialize with a single item if no items exist
-    if (widget.completeExpense?.items != null && widget.completeExpense!.items!.isNotEmpty) {
-      // Create new ExpenseItem instances to avoid reference issues
-      expenseItems = List.generate(
-        widget.completeExpense!.items!.length,
-        (index) => ExpenseItem(
-          name: '',
-          category: 'Food',
-          quantity: 1,
-          price: 0.0,
-        ),
-      );
+    // Initialize expenseItems from scanned receipt data
+    if (widget.completeExpense != null && widget.completeExpense!.items.isNotEmpty) {
+      // Use the scanned items from the receipt
+      expenseItems = List<ExpenseItem>.from(widget.completeExpense!.items);
+      print('🔍 DEBUG: Loaded ${expenseItems.length} scanned items from receipt');
+      for (int i = 0; i < expenseItems.length; i++) {
+        print('🔍 DEBUG: Item $i - Name: ${expenseItems[i].name}, Category: ${expenseItems[i].category}, Quantity: ${expenseItems[i].quantity}, Price: ${expenseItems[i].price}');
+      }
+      isMultipleItem = expenseItems.length > 1;
     } else {
+      // Initialize with a single empty item if no scanned data
       expenseItems = [ExpenseItem(
         name: '',
         category: 'Food',
         quantity: 1,
         price: 0.0,
       )];
+      isMultipleItem = false;
     }
     
-    isMultipleItem = expenseItems.length > 1 ? true : false;
+    print('🔍 DEBUG: Final expenseItems count: ${expenseItems.length}, isMultipleItem: $isMultipleItem');
   }
 
   CarbonService carbonService = CarbonService();
@@ -538,49 +552,71 @@ class _RecordTransactionState extends State<RecordTransaction> {
                 alignment: Alignment.center,
                 child: DetailsButton(
                     textColor: 0xff000000,
-                    buttonColor: 0xff74c95c,
-                    button_text: "Done",
+                    buttonColor: _isProcessing ? 0xff999999 : 0xff74c95c, // Change color when processing
+                    button_text: _isProcessing ? "Processing..." : "Done",
                     onPressed: () async {
-                      if (isExpense) {
-                        // Debug: Print current expense items
-                        print('🔍 DEBUG: Saving ${expenseItems.length} expense items');
-                        for (int i = 0; i < expenseItems.length; i++) {
-                          print('🔍 DEBUG: Item $i - Name: ${expenseItems[i].name}, Category: ${expenseItems[i].category}, Quantity: ${expenseItems[i].quantity}, Price: ${expenseItems[i].price}');
-                        }
-                        
-                        for (ExpenseItem item in expenseItems) {
-                          if (item.name.isEmpty ||
-                              item.category.isEmpty ||
-                              item.quantity == 0 ||
-                              item.price == 0) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              duration: Duration(seconds: 1),
-                              content: Text(
-                                  "Please ensure that the item(s) are not empty."),
-                              backgroundColor: Colors.red,
-                            ));
-                            return;
+                      if (_isProcessing) return; // Don't process if already processing
+                      if (!mounted) return; // Safety check
+                      
+                      setState(() {
+                        _isProcessing = true; // Set processing state
+                      });
+                      
+                      try {
+                        if (isExpense) {
+                          // Debug: Print current expense items
+                          print('🔍 DEBUG: Saving ${expenseItems.length} expense items');
+                          for (int i = 0; i < expenseItems.length; i++) {
+                            print('🔍 DEBUG: Item $i - Name: ${expenseItems[i].name}, Category: ${expenseItems[i].category}, Quantity: ${expenseItems[i].quantity}, Price: ${expenseItems[i].price}');
                           }
+                          
+                          for (ExpenseItem item in expenseItems) {
+                            if (item.name.isEmpty ||
+                                item.category.isEmpty ||
+                                item.quantity == 0 ||
+                                item.price == 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                duration: Duration(seconds: 1),
+                                content: Text(
+                                    "Please ensure that the item(s) are not empty."),
+                                backgroundColor: Colors.red,
+                              ));
+                              setState(() {
+                                _isProcessing = false; // Reset processing state on error
+                              });
+                              return;
+                            }
+                          }
+                          await carbonService.generateCarbonApiJson(
+                              transaction, expenseItems);
+                          final expenseRef =
+                              await saveExpense(transaction, expenseItems);
+                          expenseRefId = expenseRef.id;
+                        } else {
+                          final incomeRef = await db.addIncome(transaction);
+                          incomeRefId = incomeRef.id;
                         }
-                        await carbonService.generateCarbonApiJson(
-                            transaction, expenseItems);
-                        final expenseRef =
-                            await saveExpense(transaction, expenseItems);
-                        expenseRefId = expenseRef.id;
-                      } else {
-                        final incomeRef = await db.addIncome(transaction);
-                        incomeRefId = incomeRef.id;
-                      }
 
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TransactionDetails(
-                                    transactionId:
-                                        isExpense ? expenseRefId : incomeRefId,
-                                    isExpense: isExpense,
-                                    fromForm: true,
-                                  )));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => TransactionDetails(
+                                      transactionId:
+                                          isExpense ? expenseRefId : incomeRefId,
+                                      isExpense: isExpense,
+                                      fromForm: true,
+                                    )));
+                      } catch (e) {
+                        print('Error processing transaction: $e');
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          duration: Duration(seconds: 3),
+                          content: Text("Error processing transaction: $e"),
+                          backgroundColor: Colors.red,
+                        ));
+                        setState(() {
+                          _isProcessing = false; // Reset processing state on error
+                        });
+                      }
                     }),
               )
             ],

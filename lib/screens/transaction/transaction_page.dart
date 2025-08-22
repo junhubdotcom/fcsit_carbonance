@@ -288,6 +288,7 @@ bool _isSameDay(DateTime a, DateTime b) {
         ],
       ),
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Remove default back button
         title: Text(
           'Transaction',
           style: GoogleFonts.quicksand(
@@ -312,7 +313,7 @@ bool _isSameDay(DateTime a, DateTime b) {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : transactionList.isEmpty
+          : transactionList.isEmpty && incomeList.isEmpty
               ? Center(child: Text('No transactions found.'))
               : Center(
                   child: Padding(

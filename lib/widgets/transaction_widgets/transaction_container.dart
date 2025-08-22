@@ -199,9 +199,7 @@ class _TransactionContainerState extends State<TransactionContainer> {
               margin: EdgeInsets.symmetric(vertical: 5),
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: widget.transactionType == 'income' 
-                    ? Color(0xffe8f5e8) // Lighter green for income
-                    : Color(0xffe5ecdd), // Original color for expense
+                color: Color(0xffe5ecdd), // Original color for expense
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
