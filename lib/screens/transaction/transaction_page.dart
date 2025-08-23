@@ -214,7 +214,10 @@ Future<double> getTotalExpense(List<Expense> expenses) async {
         final snapshot = await itemRef.get();
         final item = snapshot.data();
         if (item != null) {
-          total += item.price ?? 0.0;
+          // Calculate total for this item: price * quantity
+          double itemTotal = (item.price ?? 0.0) * ((item.quantity ?? 1) as num);
+          total += itemTotal;
+          print('🔍 DEBUG: Item: ${item.name} - Price: RM${item.price}, Quantity: ${item.quantity}, Item Total: RM$itemTotal, Running Total: RM$total');
         }
       } catch (e) {
         print("Error fetching item from ${itemRef.id}: $e");
@@ -222,6 +225,7 @@ Future<double> getTotalExpense(List<Expense> expenses) async {
     }
   }
 
+  print('🔍 DEBUG: Final total expense: RM$total');
   return total;
 }
 
@@ -247,7 +251,10 @@ Future<double> getDailyExpense(List<Expense> expenses, DateTime date) async {
           final snapshot = await itemRef.get();
           final item = snapshot.data();
           if (item != null) {
-            total += item.price ?? 0.0;
+            // Calculate total for this item: price * quantity
+            double itemTotal = (item.price ?? 0.0) * ((item.quantity ?? 1) as num);
+            total += itemTotal;
+            print('🔍 DEBUG: Daily Item: ${item.name} - Price: RM${item.price}, Quantity: ${item.quantity}, Item Total: RM$itemTotal, Running Total: RM$total');
           }
         } catch (e) {
           print("Error fetching item from ${itemRef.id}: $e");
@@ -256,6 +263,7 @@ Future<double> getDailyExpense(List<Expense> expenses, DateTime date) async {
     }
   }
 
+  print('🔍 DEBUG: Final daily expense total: RM$total');
   return total;
 }
 

@@ -138,8 +138,12 @@ class _TransactionContainerState extends State<TransactionContainer> {
     } else {
       double totalCost = 0;
       for (final item in expenseItems) {
-        totalCost += item.price;
+        // Calculate total for this item: price * quantity
+        double itemTotal = item.price * (item.quantity ?? 1);
+        totalCost += itemTotal;
+        print('🔍 DEBUG: Item: ${item.name} - Price: RM${item.price}, Quantity: ${item.quantity}, Item Total: RM$itemTotal, Running Total: RM$totalCost');
       }
+      print('🔍 DEBUG: Final total cost: RM$totalCost');
       return totalCost;
     }
   }
