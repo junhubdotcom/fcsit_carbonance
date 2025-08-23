@@ -27,7 +27,7 @@ class _TransactionContainerState extends State<TransactionContainer> {
   final DatabaseService db = DatabaseService();
   bool isLoading = true;
   bool isMounted = false;
-  late dynamic transaction;
+  dynamic transaction; // Can be either Expense or Income
   List<ExpenseItem> expenseItems = [];
   Income? income;
 
@@ -60,19 +60,25 @@ class _TransactionContainerState extends State<TransactionContainer> {
 
   Future<void> _fetchExpenses(String transactionId) async {
     if (isLoading) {
-      transaction = await db.getExpense(transactionId);
-      if (transaction?.items != null && transaction!.items!.isNotEmpty) {
-        for (final itemRef in transaction.items!) {
-          try {
-            DocumentSnapshot<ExpenseItem> snapshot = await itemRef.get();
-            ExpenseItem? item = snapshot.data();
-            if (item != null) expenseItems.add(item);
-          } catch (e) {
-            print("Error fetching ExpenseItem (${itemRef.id}): $e");
+      final fetchedTransaction = await db.getExpense(transactionId);
+      if (fetchedTransaction != null) {
+        transaction = fetchedTransaction; // This is now guaranteed to be an Expense
+        
+        if (transaction.items != null && transaction.items!.isNotEmpty) {
+          for (final itemRef in transaction.items!) {
+            try {
+              DocumentSnapshot<ExpenseItem> snapshot = await itemRef.get();
+              ExpenseItem? item = snapshot.data();
+              if (item != null) expenseItems.add(item);
+            } catch (e) {
+              print("Error fetching ExpenseItem (${itemRef.id}): $e");
+            }
           }
+        } else {
+          print("Expense has no referenced items or is null.");
         }
       } else {
-        print("Expense has no referenced items or is null.");
+        print("No expense found for ID: $transactionId");
       }
     }
   }
@@ -140,15 +146,31 @@ class _TransactionContainerState extends State<TransactionContainer> {
 
   String getTransactionName() {
     if (widget.transactionType == 'income') {
-      return income?.transactionName ?? 'Income';
+      final name = income?.transactionName ?? 'Income';
+      print('🔍 DEBUG: Income transaction name: "$name"');
+      return name;
     } else {
-      return (transaction.transactionName != null &&
-              transaction.transactionName!.isNotEmpty)
-          ? transaction.transactionName
-          : expenseItems.isNotEmpty &&
-                  expenseItems[0].name.isNotEmpty
-              ? expenseItems[0].name
-              : "No Transaction Name";
+      // For expenses, safely access transactionName
+      if (transaction is Expense) {
+        final dbName = (transaction as Expense).transactionName;
+        final firstItemName = expenseItems.isNotEmpty ? expenseItems[0].name : '';
+        
+        print('🔍 DEBUG: Expense transaction name check:');
+        print('🔍 DEBUG:   - Database transactionName: "$dbName"');
+        print('🔍 DEBUG:   - First item name: "$firstItemName"');
+        
+        if (dbName != null && dbName.isNotEmpty) {
+          print('🔍 DEBUG: ✅ Using database transactionName: "$dbName"');
+          return dbName;
+        } else if (firstItemName.isNotEmpty) {
+          print('🔍 DEBUG: ⚠️ Database name empty, using first item name: "$firstItemName"');
+          return firstItemName;
+        } else {
+          print('🔍 DEBUG: ❌ No name available, using fallback');
+          return "No Transaction Name";
+        }
+      }
+      return "No Transaction Name"; // Fallback
     }
   }
 
@@ -156,7 +178,11 @@ class _TransactionContainerState extends State<TransactionContainer> {
     if (widget.transactionType == 'income') {
       return income?.paymentMethod ?? 'Unknown';
     } else {
-      return transaction.paymentMethod ?? 'Unknown';
+      // For expenses, safely access paymentMethod
+      if (transaction is Expense) {
+        return (transaction as Expense).paymentMethod ?? 'Unknown';
+      }
+      return 'Unknown'; // Fallback
     }
   }
 
@@ -164,7 +190,11 @@ class _TransactionContainerState extends State<TransactionContainer> {
     if (widget.transactionType == 'income') {
       return 0.0; // Income typically has no carbon footprint
     } else {
-      return transaction.carbonFootprint ?? 0.0;
+      // For expenses, safely access carbonFootprint
+      if (transaction is Expense) {
+        return (transaction as Expense).carbonFootprint ?? 0.0;
+      }
+      return 0.0; // Fallback
     }
   }
 

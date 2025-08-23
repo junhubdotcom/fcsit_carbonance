@@ -81,6 +81,24 @@ class _RecordTransactionState extends State<RecordTransaction> {
         print('🔍 DEBUG: Item $i - Name: ${expenseItems[i].name}, Category: ${expenseItems[i].category}, Quantity: ${expenseItems[i].quantity}, Price: ${expenseItems[i].price}');
       }
       isMultipleItem = expenseItems.length > 1;
+      
+      // Debug: Check the transaction name from scanned receipt
+      print('🔍 DEBUG: Scanned receipt transaction details:');
+      print('🔍 DEBUG: - Original transactionName: "${widget.completeExpense!.generalDetails.transactionName}"');
+      print('🔍 DEBUG: - Items count: ${expenseItems.length}');
+      
+      // Auto-set transaction name if it's empty
+      if (transaction.transactionName == null || transaction.transactionName!.isEmpty) {
+        if (expenseItems.length == 1) {
+          transaction.transactionName = expenseItems[0].name;
+          print('🔍 DEBUG: Auto-set transaction name from single item: "${transaction.transactionName}"');
+        } else if (expenseItems.length > 1) {
+          transaction.transactionName = 'Multiple Items (${expenseItems.length})';
+          print('🔍 DEBUG: Auto-set transaction name for multiple items: "${transaction.transactionName}"');
+        }
+      }
+      
+      print('🔍 DEBUG: Final transaction name before saving: "${transaction.transactionName}"');
     } else {
       // Initialize with a single empty item if no scanned data
       expenseItems = [ExpenseItem(
@@ -157,6 +175,25 @@ class _RecordTransactionState extends State<RecordTransaction> {
   Future<DocumentReference<Expense>> saveExpense(
       Expense expense, List<ExpenseItem> items) async {
     try {
+      // Auto-generate transaction name based on items
+      if (expense.transactionName == null || expense.transactionName!.isEmpty) {
+        if (items.length == 1) {
+          // If only one item, use that item's name
+          expense.transactionName = items[0].name;
+          print('🔍 DEBUG: Auto-generated transaction name from single item: "${expense.transactionName}"');
+        } else if (items.length > 1) {
+          // If multiple items, create a descriptive name
+          expense.transactionName = 'Multiple Items (${items.length})';
+          print('🔍 DEBUG: Auto-generated transaction name for multiple items: "${expense.transactionName}"');
+        } else {
+          // Fallback name
+          expense.transactionName = 'Transaction';
+          print('🔍 DEBUG: Using fallback transaction name: "${expense.transactionName}"');
+        }
+      }
+      
+      print('🔍 DEBUG: Final transaction name: "${expense.transactionName}"');
+      
       List<DocumentReference<ExpenseItem>> itemRefs = [];
       print("ExpenseItems: $items");
       for (ExpenseItem item in items) {
