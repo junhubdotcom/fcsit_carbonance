@@ -34,7 +34,7 @@ void main() async {
   );
   FirebaseFirestore.instance.settings =
       const Settings(persistenceEnabled: true);
-  
+
   // Only initialize Gemini if we have a valid API key
   if (geminiApiKey != null && geminiApiKey.isNotEmpty) {
     Gemini.init(apiKey: geminiApiKey);
@@ -42,7 +42,7 @@ void main() async {
   } else {
     print('⚠️ DEBUG: Gemini not initialized - no valid API key');
   }
-  
+
   runApp(MyApp());
 }
 
