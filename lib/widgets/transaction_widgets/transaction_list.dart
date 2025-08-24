@@ -10,7 +10,15 @@ import 'package:steadypunpipi_vhack/widgets/transaction_widgets/transaction_cont
 
 class TransactionList extends StatefulWidget {
   final List<DateTime> uniqueDates;
-  const TransactionList({super.key, required this.uniqueDates});
+  final List<Expense>? filteredExpenses;
+  final List<Income>? filteredIncomes;
+  
+  const TransactionList({
+    super.key, 
+    required this.uniqueDates,
+    this.filteredExpenses,
+    this.filteredIncomes,
+  });
 
   @override
   State<TransactionList> createState() => _TransactionListState();
@@ -26,6 +34,20 @@ class _TransactionListState extends State<TransactionList> {
     uniqueDates = widget.uniqueDates;
   }
 
+  @override
+  void didUpdateWidget(TransactionList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Check if the filtered data has changed
+    if (oldWidget.uniqueDates != widget.uniqueDates ||
+        oldWidget.filteredExpenses != widget.filteredExpenses ||
+        oldWidget.filteredIncomes != widget.filteredIncomes) {
+      print('🔍 DEBUG: TransactionList data changed, updating...');
+      setState(() {
+        uniqueDates = widget.uniqueDates;
+      });
+    }
+  }
+
   
 
   @override
@@ -38,6 +60,8 @@ class _TransactionListState extends State<TransactionList> {
         final date = widget.uniqueDates[index];
         return _buildTransactionDay(
           date: date,
+          filteredExpenses: widget.filteredExpenses,
+          filteredIncomes: widget.filteredIncomes,
         );
       },
     );
@@ -46,9 +70,13 @@ class _TransactionListState extends State<TransactionList> {
 
 class _buildTransactionDay extends StatefulWidget {
   final DateTime date;
+  final List<Expense>? filteredExpenses;
+  final List<Income>? filteredIncomes;
 
   const _buildTransactionDay({
     required this.date,
+    this.filteredExpenses,
+    this.filteredIncomes,
   });
 
   @override
@@ -57,9 +85,10 @@ class _buildTransactionDay extends StatefulWidget {
 
 class _buildTransactionDayState extends State<_buildTransactionDay> {
   bool isLoading = true;
+  bool _isInitializing = false; // Flag to prevent multiple simultaneous initializations
   DatabaseService _databaseService = DatabaseService();
-  late final String day;
-  late final String month;
+  String day = '';
+  String month = '';
   late List<Expense> expenseList = [];
   late List<Income> incomeList = [];
   late List<Map<String, dynamic>> allTransactions = []; // Combined transactions
@@ -74,27 +103,68 @@ class _buildTransactionDayState extends State<_buildTransactionDay> {
     initData();
   }
 
-  void initData() async {
-    day = DateFormat('dd').format(widget.date);
-    month = DateFormat('MMMM').format(widget.date);
-    
-    print('🔍 DEBUG: Fetching data for date: ${widget.date}');
-    
-    await getExpensesByDay(widget.date);
-    await getIncomesByDay(widget.date);
-    
-    print('🔍 DEBUG: Raw data - Expenses: ${expenseList.length}, Incomes: ${incomeList.length}');
-    
-    _combineAndSortTransactions();
-    await _calculateSummaryValues();
-    
-    print('🔍 DEBUG: Processed - All transactions: ${allTransactions.length}');
-    print('🔍 DEBUG: Summary - Income: $dailyIncome, Expense: $dailyExpense, Carbon: $dailyCarbon');
-    
-    if (mounted) {
-      setState(() {
-        isLoading = false;
+  @override
+  void didUpdateWidget(_buildTransactionDay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Check if the filtered data has changed
+    if (oldWidget.filteredExpenses != widget.filteredExpenses ||
+        oldWidget.filteredIncomes != widget.filteredIncomes) {
+      print('🔍 DEBUG: _buildTransactionDay data changed for date ${widget.date}, rebuilding...');
+      // Use Future.microtask to avoid calling async method in sync context
+      Future.microtask(() {
+        if (mounted) {
+          initData(); // Rebuild with new filtered data
+        }
       });
+    }
+  }
+
+  void initData() async {
+    // Prevent multiple simultaneous initializations
+    if (_isInitializing) {
+      print('🔍 DEBUG: Already initializing, skipping...');
+      return;
+    }
+    
+    _isInitializing = true;
+    
+    try {
+      day = DateFormat('dd').format(widget.date);
+      month = DateFormat('MMMM').format(widget.date);
+      
+      print('🔍 DEBUG: Processing data for date: ${widget.date}');
+      
+      // Use filtered data if available, otherwise fetch from database
+      if (widget.filteredExpenses != null && widget.filteredIncomes != null) {
+        print('🔍 DEBUG: Using filtered data');
+        expenseList = widget.filteredExpenses!.where((expense) {
+          return _isSameDay(expense.dateTime.toDate(), widget.date);
+        }).toList();
+        
+        incomeList = widget.filteredIncomes!.where((income) {
+          return _isSameDay(income.dateTime.toDate(), widget.date);
+        }).toList();
+      } else {
+        print('🔍 DEBUG: Fetching data from database');
+        await getExpensesByDay(widget.date);
+        await getIncomesByDay(widget.date);
+      }
+      
+      print('🔍 DEBUG: Raw data - Expenses: ${expenseList.length}, Incomes: ${incomeList.length}');
+      
+      _combineAndSortTransactions();
+      await _calculateSummaryValues();
+      
+      print('🔍 DEBUG: Processed - All transactions: ${allTransactions.length}');
+      print('🔍 DEBUG: Summary - Income: $dailyIncome, Expense: $dailyExpense, Carbon: $dailyCarbon');
+      
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    } finally {
+      _isInitializing = false;
     }
   }
 
@@ -226,6 +296,10 @@ class _buildTransactionDayState extends State<_buildTransactionDay> {
     }
     print('🔍 DEBUG: Final daily carbon total: $total');
     return total;
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   @override

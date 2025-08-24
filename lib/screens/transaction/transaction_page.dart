@@ -33,10 +33,23 @@ class _TransactionPageState extends State<TransactionPage> {
   double dailyExpense = 0.0;
   double dailyCarbonFootprint = 0.0;
 
+  // Search functionality
+  String searchQuery = '';
+  List<Expense> filteredExpenses = [];
+  List<Income> filteredIncomes = [];
+  List<DateTime> filteredUniqueDates = [];
+  late TextEditingController _searchController;
+  
+  // Month filtering functionality
+  DateTime? selectedMonth; // Null initially to show empty dropdown
+  String displayMonth = ''; // Empty initially
+  String formattedMonth = '';
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _searchController = TextEditingController();
     initData();
   }
 
@@ -66,10 +79,20 @@ class _TransactionPageState extends State<TransactionPage> {
     await getTotal();
   }
 
+  // Initialize filtered lists to show all transactions by default
+  filteredExpenses = List.from(transactionList);
+  filteredIncomes = List.from(incomeList);
+  filteredUniqueDates = List.from(uniqueDates);
+
   if (mounted) {
     setState(() {
       isLoading = false;
     });
+  }
+  
+  // Apply month filtering after data is loaded
+  if (selectedMonth != null) {
+    _applyMonthFilter();
   }
 }
 
@@ -77,6 +100,7 @@ class _TransactionPageState extends State<TransactionPage> {
   @override
   void dispose() {
     super.dispose();
+    _searchController.dispose();
   }
 
   Future<void> getAllExpenses() async {
@@ -92,7 +116,6 @@ class _TransactionPageState extends State<TransactionPage> {
       uniqueDates = dateSet.toList()
         ..sort(
             (a, b) => b.compareTo(a)); // Sort unique dates in descending order
-      // Debug print unique dates
     } else {
       print("No expenses found.");
     }
@@ -110,7 +133,6 @@ class _TransactionPageState extends State<TransactionPage> {
       uniqueDates = dateSet.toList()
         ..sort(
             (a, b) => b.compareTo(a)); // Sort unique dates in descending order
-      // Debug print unique dates
     } else {
       print("No incomes found.");
     }
@@ -123,14 +145,10 @@ class _TransactionPageState extends State<TransactionPage> {
 
   }
 
-  String displayMonth = DateFormat('MMMM yyyy').format(DateTime.now());
-  DateTime selectedMonth = DateTime.now();
-  String formattedMonth = '';
-
   void selectMonth() {
     showMonthPicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: selectedMonth ?? DateTime.now(),
       monthPickerDialogSettings: MonthPickerDialogSettings(
           headerSettings: PickerHeaderSettings(
               headerBackgroundColor: Colors.green.shade300,
@@ -163,9 +181,19 @@ class _TransactionPageState extends State<TransactionPage> {
       if (date != null) {
         setState(() {
           selectedMonth = date;
-          formattedMonth = DateFormat('MMMM yyyy').format(selectedMonth);
+          formattedMonth = DateFormat('MMMM yyyy').format(selectedMonth!);
           displayMonth = formattedMonth;
         });
+        
+        // Apply month filtering after month selection
+        _applyMonthFilter();
+        
+        // Clear search when month changes
+        if (searchQuery.isNotEmpty) {
+          _searchController.clear();
+          searchQuery = '';
+        }
+        
       }
     });
   }
@@ -183,13 +211,17 @@ Future<double> getTotalExpense(List<Expense> expenses) async {
         final snapshot = await itemRef.get();
         final item = snapshot.data();
         if (item != null) {
-          total += item.price ?? 0.0;
+          // Calculate total for this item: price * quantity
+          double itemTotal = (item.price ?? 0.0) * ((item.quantity ?? 1) as num);
+          total += itemTotal;
+          
         }
       } catch (e) {
         print("Error fetching item from ${itemRef.id}: $e");
       }
     }
   }
+
 
   return total;
 }
@@ -216,7 +248,10 @@ Future<double> getDailyExpense(List<Expense> expenses, DateTime date) async {
           final snapshot = await itemRef.get();
           final item = snapshot.data();
           if (item != null) {
-            total += item.price ?? 0.0;
+            // Calculate total for this item: price * quantity
+            double itemTotal = (item.price ?? 0.0) * ((item.quantity ?? 1) as num);
+            total += itemTotal;
+          
           }
         } catch (e) {
           print("Error fetching item from ${itemRef.id}: $e");
@@ -225,6 +260,7 @@ Future<double> getDailyExpense(List<Expense> expenses, DateTime date) async {
     }
   }
 
+  
   return total;
 }
 
@@ -243,6 +279,123 @@ double getDailyCarbonFootprint(List<Expense> incomeList, List<Expense> expenseLi
 
 bool _isSameDay(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+bool _isSameMonth(DateTime a, DateTime b) {
+  return a.year == b.year && a.month == b.month;
+}
+
+// Month filtering functionality
+void _applyMonthFilter() {
+  
+  setState(() {
+    if (selectedMonth == null) {
+      // No month selected, show all transactions
+      filteredExpenses = List.from(transactionList);
+      filteredIncomes = List.from(incomeList);
+  
+    } else {
+      // Filter expenses by month
+      filteredExpenses = transactionList.where((expense) {
+        return _isSameMonth(expense.dateTime.toDate(), selectedMonth!);
+      }).toList();
+      
+      // Filter incomes by month
+      filteredIncomes = incomeList.where((income) {
+        return _isSameMonth(income.dateTime.toDate(), selectedMonth!);
+      }).toList();
+      
+    }
+    
+    // Update filtered unique dates based on month-filtered transactions
+    final Set<DateTime> filteredDateSet = {};
+    
+    for (var transaction in filteredExpenses) {
+      if (transaction.dateTime != null) {
+        Timestamp timestamp = transaction.dateTime;
+        DateTime dateTime = timestamp.toDate();
+        filteredDateSet.add(DateTime(dateTime.year, dateTime.month, dateTime.day));
+      }
+    }
+    
+    for (var income in filteredIncomes) {
+      if (income.dateTime != null) {
+        Timestamp timestamp = income.dateTime;
+        DateTime dateTime = timestamp.toDate();
+        filteredDateSet.add(DateTime(dateTime.year, dateTime.month, dateTime.day));
+      }
+    }
+    
+    filteredUniqueDates = filteredDateSet.toList()
+      ..sort((a, b) => b.compareTo(a)); // Descending
+      
+  });
+}
+
+// Search functionality
+void _filterTransactions(String query) {
+  
+  for (int i = 0; i < transactionList.length; i++) {
+    final expense = transactionList[i];
+  }
+  
+  for (int i = 0; i < incomeList.length; i++) {
+    final income = incomeList[i];
+  }
+  
+  setState(() {
+    searchQuery = query;
+    
+    if (query.isEmpty) {
+      // Show all transactions for the selected month when search is empty
+      _applyMonthFilter(); // This will filter by month only
+    } else {
+      // Filter by both search term AND month
+      filteredExpenses = transactionList.where((expense) {
+        final name = expense.transactionName?.toLowerCase() ?? '';
+        final searchTerm = query.toLowerCase();
+        final matchesSearch = name.contains(searchTerm);
+        final matchesMonth = selectedMonth == null || _isSameMonth(expense.dateTime.toDate(), selectedMonth!);
+        
+        return matchesSearch && matchesMonth;
+      }).toList();
+      
+      filteredIncomes = incomeList.where((income) {
+        final name = income.transactionName?.toLowerCase() ?? '';
+        final searchTerm = query.toLowerCase();
+        final matchesSearch = name.contains(searchTerm);
+        final matchesMonth = selectedMonth == null || _isSameMonth(income.dateTime.toDate(), selectedMonth!);
+        
+        return matchesSearch && matchesMonth;
+      }).toList();
+      
+      
+      // Update filtered unique dates based on search + month filtered transactions
+      final Set<DateTime> filteredDateSet = {};
+      
+      for (var transaction in filteredExpenses) {
+        if (transaction.dateTime != null) {
+          Timestamp timestamp = transaction.dateTime;
+          DateTime dateTime = timestamp.toDate();
+          filteredDateSet.add(DateTime(dateTime.year, dateTime.month, dateTime.day));
+        }
+      }
+      
+      for (var income in filteredIncomes) {
+        if (income.dateTime != null) {
+          Timestamp timestamp = income.dateTime;
+          DateTime dateTime = timestamp.toDate();
+          filteredDateSet.add(DateTime(dateTime.year, dateTime.month, dateTime.day));
+        }
+      }
+      
+      filteredUniqueDates = filteredDateSet.toList()
+        ..sort((a, b) => b.compareTo(a)); // Descending
+        
+    }
+    
+
+  });
 }
 
 
@@ -288,6 +441,7 @@ bool _isSameDay(DateTime a, DateTime b) {
         ],
       ),
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Remove default back button
         title: Text(
           'Transaction',
           style: GoogleFonts.quicksand(
@@ -312,7 +466,7 @@ bool _isSameDay(DateTime a, DateTime b) {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : transactionList.isEmpty
+          : transactionList.isEmpty && incomeList.isEmpty
               ? Center(child: Text('No transactions found.'))
               : Center(
                   child: Padding(
@@ -360,8 +514,23 @@ bool _isSameDay(DateTime a, DateTime b) {
                         onPressed: () {
                           selectMonth();
                         },
+                        onLongPress: () {
+                          // Reset to no month filter on long press
+                          setState(() {
+                            selectedMonth = null;
+                            displayMonth = '';
+                          });
+                          _applyMonthFilter();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Month filter cleared'),
+                              duration: Duration(seconds: 1),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0XFFE5ECDD),
+                            backgroundColor: Color(0XFFE5ECDD), 
                             shape: RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(8.0)))),
@@ -371,16 +540,17 @@ bool _isSameDay(DateTime a, DateTime b) {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                displayMonth,
+                                displayMonth.isEmpty ? 'Select Month' : displayMonth,
                                 style: GoogleFonts.quicksand(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
-                                    color: Colors.black),
+                                    color: displayMonth.isEmpty ? Colors.grey : Colors.black),
                               ),
                               Expanded(
                                 child: Icon(
                                   Icons.arrow_drop_down,
                                   size: 20,
+                                  color: displayMonth.isEmpty ? Colors.grey : Colors.black,
                                 ),
                               )
                             ],
@@ -392,12 +562,24 @@ bool _isSameDay(DateTime a, DateTime b) {
                       ),
                       SearchBar(
                           leading: Icon(Icons.search),
-                          hintText: 'Search',
+                          hintText: 'Search transactions...',
                           constraints:
                               BoxConstraints(minHeight: 45, maxHeight: 45),
                           elevation: WidgetStatePropertyAll(0),
                           shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)))),
+                              borderRadius: BorderRadius.circular(10))),
+                          onChanged: _filterTransactions, // Add search functionality
+                          controller: _searchController, // Use the managed controller
+                          trailing: searchQuery.isNotEmpty ? [
+                            IconButton(
+                              icon: Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                _filterTransactions('');
+                              },
+                            )
+                          ] : null,
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -408,9 +590,119 @@ bool _isSameDay(DateTime a, DateTime b) {
                             scrollDirection: Axis.vertical,
                             child: Column(
                               children: [
-                                TransactionList(
-                                  uniqueDates: uniqueDates,
-                                ),
+                                // Month filter indicator
+                                if (selectedMonth != null)
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: 16),
+                                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Color.fromARGB(255, 98, 181, 75),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.calendar_today,
+                                          color: Colors.white,
+                                          size: 16,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Filtered: ${DateFormat('MMMM yyyy').format(selectedMonth!)}',
+                                          style: GoogleFonts.quicksand(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedMonth = null;
+                                              displayMonth = '';
+                                            });
+                                            _applyMonthFilter();
+                                          },
+                                          child: Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                // Show "no transactions found" message when search has no results
+                                if (searchQuery.isNotEmpty && filteredExpenses.isEmpty && filteredIncomes.isEmpty)
+                                  Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.search_off,
+                                          size: 64,
+                                          color: Colors.grey[400],
+                                        ),
+                                        SizedBox(height: 16),
+                                        Text(
+                                          'No transactions found matching "$searchQuery"',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Try searching for a different term',
+                                          style: TextStyle(
+                                            color: Colors.grey[500],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                else if (selectedMonth != null && filteredExpenses.isEmpty && filteredIncomes.isEmpty)
+                                  Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.calendar_today,
+                                          size: 64,
+                                          color: Colors.grey[400],
+                                        ),
+                                        SizedBox(height: 16),
+                                        Text(
+                                          'No transactions found for ${DateFormat('MMMM yyyy').format(selectedMonth!)}',
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          'Try selecting a different month',
+                                          style: TextStyle(
+                                            color: Colors.grey[500],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                else
+                                  TransactionList(
+                                    uniqueDates: filteredUniqueDates.isNotEmpty ? filteredUniqueDates : uniqueDates,
+                                    filteredExpenses: filteredExpenses.isNotEmpty ? filteredExpenses : transactionList,
+                                    filteredIncomes: filteredIncomes.isNotEmpty ? filteredIncomes : incomeList,
+                                  ),
                               ],
                             )),
                       )

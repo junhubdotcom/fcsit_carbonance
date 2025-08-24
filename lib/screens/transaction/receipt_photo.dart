@@ -16,6 +16,7 @@ class ReceiptPhoto extends StatefulWidget {
 
 class _ReceiptPhotoState extends State<ReceiptPhoto> {
   final ApiService _apiService = ApiService();
+  bool _isProcessing = false; // Add loading state
 
   @override
   Widget build(BuildContext context) {
@@ -51,25 +52,61 @@ class _ReceiptPhotoState extends State<ReceiptPhoto> {
                     width: 70,
                     height: 70,
                     child: FloatingActionButton(
-                      child: Icon(
-                        Icons.check,
-                        size: 35,
-                        color: Colors.black,
-                      ),
-                      backgroundColor: Colors.white,
+                      child: _isProcessing
+                          ? SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                              ),
+                            )
+                          : Icon(
+                              Icons.check,
+                              size: 35,
+                              color: Colors.black,
+                            ),
+                      backgroundColor: _isProcessing ? Colors.grey : Colors.white,
                       shape: CircleBorder(),
-                      onPressed: () async {
-                        print("Generate Content");
-                        CompleteExpense completeExpense =
-                            await _apiService.generateContent(widget.imgPath);
-                        print("Content Generated");
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RecordTransaction(
-                                      completeExpense: completeExpense,
-                                    )));
-                      },
+                      onPressed: _isProcessing
+                          ? null // Disable button while processing
+                          : () async {
+                              setState(() {
+                                _isProcessing = true; // Start loading
+                              });
+                              
+                              try {
+                                print("Generate Content");
+                                CompleteExpense completeExpense =
+                                    await _apiService.generateContent(widget.imgPath);
+                                print("Content Generated");
+                                
+                                if (mounted) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => RecordTransaction(
+                                                completeExpense: completeExpense,
+                                              )));
+                                }
+                              } catch (e) {
+                                print("Error generating content: $e");
+                                if (mounted) {
+                                  // Show error message
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error processing receipt: $e'),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 3),
+                                    ),
+                                  );
+                                  // Reset loading state on error
+                                  setState(() {
+                                    _isProcessing = false;
+                                  });
+                                }
+                              }
+                            },
                     ),
                   ),
                 ),

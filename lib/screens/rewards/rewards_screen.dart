@@ -90,6 +90,7 @@ class _RewardsScreenState extends State<RewardsScreen> {
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
+          automaticallyImplyLeading: false, // Remove default back button
           title: Text(
             'Rewards',
             style: GoogleFonts.quicksand(

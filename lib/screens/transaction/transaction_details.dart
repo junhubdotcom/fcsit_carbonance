@@ -29,6 +29,7 @@ class TransactionDetails extends StatefulWidget {
 
 class _TransactionDetailsState extends State<TransactionDetails> {
   bool isLoading = true;
+  bool _isProcessing = false; // Add loading state
   DatabaseService db = DatabaseService();
   late dynamic transaction;
   List<ExpenseItem> expenseItems = [];
@@ -40,11 +41,13 @@ class _TransactionDetailsState extends State<TransactionDetails> {
   }
 
   void initData() async {
-    await _fetchAndPrintExpenses(widget.transactionId);
-    setState(() {
-      isLoading = false;
-    });
-  }
+  await _fetchAndPrintExpenses(widget.transactionId);
+  if (!mounted) return; // 🔑 Safety check
+  setState(() {
+    isLoading = false;
+  });
+}
+
 
   Future<void> _fetchAndPrintExpenses(String transactionId) async {
     print("Fetching expenses...");
@@ -77,7 +80,9 @@ class _TransactionDetailsState extends State<TransactionDetails> {
   double calculateTotalCost() {
     double totalCost = 0;
     for (int i = 0; i < expenseItems.length; i++) {
-      totalCost += expenseItems[i].price;
+      // Calculate total for this item: price * quantity
+      double itemTotal = expenseItems[i].price * (expenseItems[i].quantity ?? 1);
+      totalCost += itemTotal;
     }
     return totalCost;
   }
@@ -251,9 +256,16 @@ class _TransactionDetailsState extends State<TransactionDetails> {
                   child: widget.fromForm
                       ? DetailsButton(
                           textColor: 0xff000000,
-                          buttonColor: 0xff999974c95c,
-                          button_text: "Done",
+                          buttonColor: _isProcessing ? 0xff999999 : 0xff999974c95c, // Change color when processing
+                          button_text: _isProcessing ? "Processing..." : "Done",
                           onPressed: () {
+                            if (_isProcessing) return; // Don't process if already processing
+                            if (!mounted) return; // Safety check
+                            
+                            setState(() {
+                              _isProcessing = true; // Set processing state
+                            });
+                            
                             Navigator.push(
                               context,
                               MaterialPageRoute(
