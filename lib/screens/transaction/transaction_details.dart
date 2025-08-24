@@ -41,11 +41,13 @@ class _TransactionDetailsState extends State<TransactionDetails> {
   }
 
   void initData() async {
-    await _fetchAndPrintExpenses(widget.transactionId);
-    setState(() {
-      isLoading = false;
-    });
-  }
+  await _fetchAndPrintExpenses(widget.transactionId);
+  if (!mounted) return; // 🔑 Safety check
+  setState(() {
+    isLoading = false;
+  });
+}
+
 
   Future<void> _fetchAndPrintExpenses(String transactionId) async {
     print("Fetching expenses...");
@@ -81,9 +83,7 @@ class _TransactionDetailsState extends State<TransactionDetails> {
       // Calculate total for this item: price * quantity
       double itemTotal = expenseItems[i].price * (expenseItems[i].quantity ?? 1);
       totalCost += itemTotal;
-      print('🔍 DEBUG: Item ${i + 1}: ${expenseItems[i].name} - Price: RM${expenseItems[i].price}, Quantity: ${expenseItems[i].quantity}, Item Total: RM$itemTotal, Running Total: RM$totalCost');
     }
-    print('🔍 DEBUG: Final total cost: RM$totalCost');
     return totalCost;
   }
 

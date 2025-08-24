@@ -4,6 +4,7 @@ import 'package:steadypunpipi_vhack/models/expense_item.dart';
 class Expense {
   String? id; // Optional: to store the document ID if needed
   String? transactionName;
+  String? category;
   List<DocumentReference<ExpenseItem>> items;
   String paymentMethod;
   Timestamp dateTime;
@@ -15,6 +16,7 @@ class Expense {
   Expense({
     String? id,
     String? transactionName,
+    String? category,
     List<DocumentReference<ExpenseItem>>? items,
     String? paymentMethod,
     Timestamp? dateTime,
@@ -23,6 +25,7 @@ class Expense {
     String? additionalImagePath,
     double? carbonFootprint,
   })  : transactionName = transactionName ?? "",
+        category = category ?? "Food",
         items = items ?? [],
         paymentMethod = paymentMethod ?? "Cash",
         dateTime = dateTime ?? Timestamp.now(),
@@ -69,6 +72,7 @@ class Expense {
 
     return Expense(
       transactionName: json['transactionName'] ?? "",
+      category: json['category'] ?? "Food",
       items: typedItemRefs,
       paymentMethod: json['paymentMethod'] ?? "Cash",
       dateTime: json['dateTime'] is Timestamp
@@ -85,6 +89,7 @@ class Expense {
   Map<String, dynamic> toJson() {
     final data = {
       'transactionName': transactionName,
+      'category': category,
       'paymentMethod': paymentMethod,
       'items': items,
       'dateTime': dateTime,

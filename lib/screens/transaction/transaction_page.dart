@@ -116,7 +116,6 @@ class _TransactionPageState extends State<TransactionPage> {
       uniqueDates = dateSet.toList()
         ..sort(
             (a, b) => b.compareTo(a)); // Sort unique dates in descending order
-      // Debug print unique dates
     } else {
       print("No expenses found.");
     }
@@ -134,7 +133,6 @@ class _TransactionPageState extends State<TransactionPage> {
       uniqueDates = dateSet.toList()
         ..sort(
             (a, b) => b.compareTo(a)); // Sort unique dates in descending order
-      // Debug print unique dates
     } else {
       print("No incomes found.");
     }
@@ -196,7 +194,6 @@ class _TransactionPageState extends State<TransactionPage> {
           searchQuery = '';
         }
         
-        print('🔍 DEBUG: Month selected: ${DateFormat('MMMM yyyy').format(selectedMonth!)}');
       }
     });
   }
@@ -217,7 +214,7 @@ Future<double> getTotalExpense(List<Expense> expenses) async {
           // Calculate total for this item: price * quantity
           double itemTotal = (item.price ?? 0.0) * ((item.quantity ?? 1) as num);
           total += itemTotal;
-          print('🔍 DEBUG: Item: ${item.name} - Price: RM${item.price}, Quantity: ${item.quantity}, Item Total: RM$itemTotal, Running Total: RM$total');
+          
         }
       } catch (e) {
         print("Error fetching item from ${itemRef.id}: $e");
@@ -225,7 +222,7 @@ Future<double> getTotalExpense(List<Expense> expenses) async {
     }
   }
 
-  print('🔍 DEBUG: Final total expense: RM$total');
+
   return total;
 }
 
@@ -254,7 +251,7 @@ Future<double> getDailyExpense(List<Expense> expenses, DateTime date) async {
             // Calculate total for this item: price * quantity
             double itemTotal = (item.price ?? 0.0) * ((item.quantity ?? 1) as num);
             total += itemTotal;
-            print('🔍 DEBUG: Daily Item: ${item.name} - Price: RM${item.price}, Quantity: ${item.quantity}, Item Total: RM$itemTotal, Running Total: RM$total');
+          
           }
         } catch (e) {
           print("Error fetching item from ${itemRef.id}: $e");
@@ -263,7 +260,7 @@ Future<double> getDailyExpense(List<Expense> expenses, DateTime date) async {
     }
   }
 
-  print('🔍 DEBUG: Final daily expense total: RM$total');
+  
   return total;
 }
 
@@ -290,14 +287,13 @@ bool _isSameMonth(DateTime a, DateTime b) {
 
 // Month filtering functionality
 void _applyMonthFilter() {
-  print('🔍 DEBUG: Applying month filter for: ${selectedMonth != null ? DateFormat('MMMM yyyy').format(selectedMonth!) : "No month selected"}');
   
   setState(() {
     if (selectedMonth == null) {
       // No month selected, show all transactions
       filteredExpenses = List.from(transactionList);
       filteredIncomes = List.from(incomeList);
-      print('🔍 DEBUG: No month selected, showing all transactions');
+  
     } else {
       // Filter expenses by month
       filteredExpenses = transactionList.where((expense) {
@@ -309,7 +305,6 @@ void _applyMonthFilter() {
         return _isSameMonth(income.dateTime.toDate(), selectedMonth!);
       }).toList();
       
-      print('🔍 DEBUG: Month filter results - Expenses: ${filteredExpenses.length}, Incomes: ${filteredIncomes.length}');
     }
     
     // Update filtered unique dates based on month-filtered transactions
@@ -334,22 +329,16 @@ void _applyMonthFilter() {
     filteredUniqueDates = filteredDateSet.toList()
       ..sort((a, b) => b.compareTo(a)); // Descending
       
-    print('🔍 DEBUG: Month-filtered unique dates: ${filteredUniqueDates.length}');
   });
 }
 
 // Search functionality
 void _filterTransactions(String query) {
-  print('🔍 DEBUG: Searching for: "$query"');
-  print('🔍 DEBUG: Total expenses: ${transactionList.length}, Total incomes: ${incomeList.length}');
   
-  // Debug: Print all transaction names for inspection
-  print('🔍 DEBUG: All expense names:');
   for (int i = 0; i < transactionList.length; i++) {
     final expense = transactionList[i];
   }
   
-  print('🔍 DEBUG: All income names:');
   for (int i = 0; i < incomeList.length; i++) {
     final income = incomeList[i];
   }
@@ -360,7 +349,6 @@ void _filterTransactions(String query) {
     if (query.isEmpty) {
       // Show all transactions for the selected month when search is empty
       _applyMonthFilter(); // This will filter by month only
-      print('🔍 DEBUG: Search cleared, showing all transactions for selected month');
     } else {
       // Filter by both search term AND month
       filteredExpenses = transactionList.where((expense) {
@@ -368,13 +356,6 @@ void _filterTransactions(String query) {
         final searchTerm = query.toLowerCase();
         final matchesSearch = name.contains(searchTerm);
         final matchesMonth = selectedMonth == null || _isSameMonth(expense.dateTime.toDate(), selectedMonth!);
-        
-        print('🔍 DEBUG: Checking expense "${expense.transactionName}":');
-        print('🔍 DEBUG:   - Original name: "${expense.transactionName}"');
-        print('🔍 DEBUG:   - Lowercase name: "$name"');
-        print('🔍 DEBUG:   - Search term: "$searchTerm"');
-        print('🔍 DEBUG:   - Search match: $matchesSearch');
-        print('🔍 DEBUG:   - Month match: $matchesMonth');
         
         return matchesSearch && matchesMonth;
       }).toList();
@@ -385,17 +366,9 @@ void _filterTransactions(String query) {
         final matchesSearch = name.contains(searchTerm);
         final matchesMonth = selectedMonth == null || _isSameMonth(income.dateTime.toDate(), selectedMonth!);
         
-        print('🔍 DEBUG: Checking income "${income.transactionName}":');
-        print('🔍 DEBUG:   - Original name: "${income.transactionName}"');
-        print('🔍 DEBUG:   - Lowercase name: "$name"');
-        print('🔍 DEBUG:   - Search term: "$searchTerm"');
-        print('🔍 DEBUG:   - Search match: $matchesSearch');
-        print('🔍 DEBUG:   - Month match: $matchesMonth');
-        
         return matchesSearch && matchesMonth;
       }).toList();
       
-      print('🔍 DEBUG: Combined search + month filter results - Expenses: ${filteredExpenses.length}, Incomes: ${filteredIncomes.length}');
       
       // Update filtered unique dates based on search + month filtered transactions
       final Set<DateTime> filteredDateSet = {};
@@ -419,10 +392,9 @@ void _filterTransactions(String query) {
       filteredUniqueDates = filteredDateSet.toList()
         ..sort((a, b) => b.compareTo(a)); // Descending
         
-      print('🔍 DEBUG: Search + month filtered unique dates: ${filteredUniqueDates.length}');
     }
     
-    print('🔍 DEBUG: Search query: "$searchQuery", Month: ${selectedMonth != null ? DateFormat('MMMM yyyy').format(selectedMonth!) : "No month selected"}');
+
   });
 }
 

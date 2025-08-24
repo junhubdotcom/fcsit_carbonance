@@ -32,16 +32,10 @@ class ApiService {
       List<ExpenseItem> expenseItems =
           await generateItemContent(imgPath, visionResult);
       
-      print('🔍 DEBUG: Generated expense: ${expense.transactionName}');
-      print('🔍 DEBUG: Generated ${expenseItems.length} items');
-      for (int i = 0; i < expenseItems.length; i++) {
-        print('🔍 DEBUG: Item $i: ${expenseItems[i].name} (${expenseItems[i].category}) x${expenseItems[i].quantity} @RM${expenseItems[i].price}');
-      }
       
       final CompleteExpense completeExpense =
           CompleteExpense.fromScannedReceipt(expense.toJson(), expenseItems);
       
-      print('🔍 DEBUG: CompleteExpense created with ${completeExpense.items.length} items');
       return completeExpense;
     } catch (e) {
       throw Exception('Error generating content: $e');
@@ -58,6 +52,7 @@ Use the following JSON schema:
 
 {
   "transactionName": String, // If there are multiple items, generate a smart name like "McDonald's Lunch" or "Grocery Shopping"; if only one item, set this to "none"
+  "category": String // Determine the major category for the expense based on the items (e.g. "Food", "Housing", "Debt Repayment", "Medical", "Transport", "Utilities", "Shopping", "Tax")
   "paymentMethod": String, //Choose one from: "Cash", "E-Wallet", "Online Banking", "Credit", "Debit"
   "location": String, // Extract location from receipt if available (e.g. merchant address or shop name)
   "dateTime": Timestamp, // Extracted from the receipt if available
@@ -67,6 +62,7 @@ Use the following JSON schema:
 Instructions:
 - Include payment method (Cash, E-Wallet, Online Banking, Credit, Debit) from the receipt.
 - Extract transaction name from the receipt (if multiple items, generate a descriptive name like "Grocery Shopping").
+- Assign the correct category strictly from the predefined list: "Food", "Housing", "Debt Repayment", "Medical", "Transport", "Utilities", "Shopping", "Tax".
 - Extract location if available (e.g., merchant name or address).
 - Estimate the date and time if available from the receipt.
 - Return the pure JSON object with no additional text or explanation.

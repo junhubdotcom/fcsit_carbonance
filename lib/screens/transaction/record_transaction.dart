@@ -55,18 +55,6 @@ class _RecordTransactionState extends State<RecordTransaction> {
     super.initState();
     isExpense = true;
     
-    // Debug: Check what completeExpense contains
-    if (widget.completeExpense != null) {
-      print('🔍 DEBUG: completeExpense received:');
-      print('🔍 DEBUG: - generalDetails: ${widget.completeExpense!.generalDetails.transactionName}');
-      print('🔍 DEBUG: - items count: ${widget.completeExpense!.items.length}');
-      for (int i = 0; i < widget.completeExpense!.items.length; i++) {
-        final item = widget.completeExpense!.items[i];
-        print('🔍 DEBUG: - Item $i: ${item.name} (${item.category}) x${item.quantity} @RM${item.price}');
-      }
-    } else {
-      print('🔍 DEBUG: No completeExpense provided');
-    }
     
     transaction = isExpense
         ? widget.completeExpense?.generalDetails ?? Expense()
@@ -76,29 +64,24 @@ class _RecordTransactionState extends State<RecordTransaction> {
     if (widget.completeExpense != null && widget.completeExpense!.items.isNotEmpty) {
       // Use the scanned items from the receipt
       expenseItems = List<ExpenseItem>.from(widget.completeExpense!.items);
-      print('🔍 DEBUG: Loaded ${expenseItems.length} scanned items from receipt');
+     
       for (int i = 0; i < expenseItems.length; i++) {
-        print('🔍 DEBUG: Item $i - Name: ${expenseItems[i].name}, Category: ${expenseItems[i].category}, Quantity: ${expenseItems[i].quantity}, Price: ${expenseItems[i].price}');
+ 
       }
       isMultipleItem = expenseItems.length > 1;
       
-      // Debug: Check the transaction name from scanned receipt
-      print('🔍 DEBUG: Scanned receipt transaction details:');
-      print('🔍 DEBUG: - Original transactionName: "${widget.completeExpense!.generalDetails.transactionName}"');
-      print('🔍 DEBUG: - Items count: ${expenseItems.length}');
       
       // Auto-set transaction name if it's empty
       if (transaction.transactionName == null || transaction.transactionName!.isEmpty) {
         if (expenseItems.length == 1) {
           transaction.transactionName = expenseItems[0].name;
-          print('🔍 DEBUG: Auto-set transaction name from single item: "${transaction.transactionName}"');
+        
         } else if (expenseItems.length > 1) {
           transaction.transactionName = 'Multiple Items (${expenseItems.length})';
-          print('🔍 DEBUG: Auto-set transaction name for multiple items: "${transaction.transactionName}"');
+ 
         }
       }
-      
-      print('🔍 DEBUG: Final transaction name before saving: "${transaction.transactionName}"');
+    
     } else {
       // Initialize with a single empty item if no scanned data
       expenseItems = [ExpenseItem(
@@ -110,7 +93,6 @@ class _RecordTransactionState extends State<RecordTransaction> {
       isMultipleItem = false;
     }
     
-    print('🔍 DEBUG: Final expenseItems count: ${expenseItems.length}, isMultipleItem: $isMultipleItem');
   }
 
   CarbonService carbonService = CarbonService();
@@ -180,19 +162,22 @@ class _RecordTransactionState extends State<RecordTransaction> {
         if (items.length == 1) {
           // If only one item, use that item's name
           expense.transactionName = items[0].name;
-          print('🔍 DEBUG: Auto-generated transaction name from single item: "${expense.transactionName}"');
         } else if (items.length > 1) {
           // If multiple items, create a descriptive name
           expense.transactionName = 'Multiple Items (${items.length})';
-          print('🔍 DEBUG: Auto-generated transaction name for multiple items: "${expense.transactionName}"');
         } else {
           // Fallback name
           expense.transactionName = 'Transaction';
-          print('🔍 DEBUG: Using fallback transaction name: "${expense.transactionName}"');
         }
       }
-      
-      print('🔍 DEBUG: Final transaction name: "${expense.transactionName}"');
+
+     // 🆕 Always sync category if only one item exists
+    if (items.length == 1) {
+      expense.category = items[0].category;
+    } else if ((expense.category == null || expense.category!.isEmpty) && items.isNotEmpty) {
+      // Only fallback for multiple items when expense.category is empty
+      expense.category = items[0].category;
+    }
       
       List<DocumentReference<ExpenseItem>> itemRefs = [];
       print("ExpenseItems: $items");
@@ -303,6 +288,23 @@ class _RecordTransactionState extends State<RecordTransaction> {
                                       onChanged: (value) {
                                         transaction.transactionName = value!;
                                       }),
+                                  SmallTitle(title: "Category"),
+                                  RecordTransactionDropdown(
+                                  value: transaction.category,
+                                  onChanged: (value) {
+                                    transaction.category = value!;
+                                  },
+                                  items: [
+                                    "Food",
+                                    "Housing",
+                                    "Debt Repayment",
+                                    "Medical",
+                                    "Transport",
+                                    "Utilities",
+                                    "Shopping",
+                                    "Tax"
+                                  ]),
+                                 
                                   SmallTitle(title: "Item"),
                                   ItemHeader(),
                                   ...expenseItems.asMap().entries.map((entry) {
@@ -601,12 +603,6 @@ class _RecordTransactionState extends State<RecordTransaction> {
                       
                       try {
                         if (isExpense) {
-                          // Debug: Print current expense items
-                          print('🔍 DEBUG: Saving ${expenseItems.length} expense items');
-                          for (int i = 0; i < expenseItems.length; i++) {
-                            print('🔍 DEBUG: Item $i - Name: ${expenseItems[i].name}, Category: ${expenseItems[i].category}, Quantity: ${expenseItems[i].quantity}, Price: ${expenseItems[i].price}');
-                          }
-                          
                           for (ExpenseItem item in expenseItems) {
                             if (item.name.isEmpty ||
                                 item.category.isEmpty ||
