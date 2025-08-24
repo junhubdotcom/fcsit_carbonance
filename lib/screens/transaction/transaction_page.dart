@@ -347,21 +347,11 @@ void _filterTransactions(String query) {
   print('🔍 DEBUG: All expense names:');
   for (int i = 0; i < transactionList.length; i++) {
     final expense = transactionList[i];
-    print('🔍 DEBUG: Expense $i: "${expense.transactionName}" (ID: ${expense.id})');
-    print('🔍 DEBUG:   - Database transactionName: "${expense.transactionName}"');
-    print('🔍 DEBUG:   - transactionName length: ${expense.transactionName?.length ?? 0}');
-    print('🔍 DEBUG:   - transactionName is empty: ${expense.transactionName?.isEmpty ?? true}');
-    print('🔍 DEBUG:   - transactionName is null: ${expense.transactionName == null}');
   }
   
   print('🔍 DEBUG: All income names:');
   for (int i = 0; i < incomeList.length; i++) {
     final income = incomeList[i];
-    print('🔍 DEBUG: Income $i: "${income.transactionName}" (ID: ${income.id})');
-    print('🔍 DEBUG:   - Database transactionName: "${income.transactionName}"');
-    print('🔍 DEBUG:   - transactionName length: ${income.transactionName?.length ?? 0}');
-    print('🔍 DEBUG:   - transactionName is empty: ${income.transactionName?.isEmpty ?? true}');
-    print('🔍 DEBUG:   - transactionName is null: ${income.transactionName == null}');
   }
   
   setState(() {
