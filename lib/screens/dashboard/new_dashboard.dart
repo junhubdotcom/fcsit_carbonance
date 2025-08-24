@@ -1010,7 +1010,6 @@ class _NewDashboardPageState extends State<NewDashboardPage>
           final periodCounters = snapshot.data!;
 
           if (_currentPeriod == 'daily') {
-            // Show last 7 days with real data
             for (int i = 0; i < periodCounters.length; i++) {
               final counter = periodCounters[i];
               final dayName = _getDayName(
@@ -1836,7 +1835,6 @@ class _NewDashboardPageState extends State<NewDashboardPage>
         }
 
         // Show all insights (no limit)
-        // insights = insights; // Keep all insights
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

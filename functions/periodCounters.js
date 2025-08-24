@@ -458,7 +458,6 @@ function generateWeeklyPeriodId(date) {
     const year = date.getFullYear();
     const startOfWeek = new Date(date);
 
-    // Fix: Use same logic as Flutter (Monday = 1, Sunday = 7)
     // Convert JavaScript getDay() (0-6) to Flutter weekday (1-7)
     const jsDay = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     const flutterWeekday = jsDay === 0 ? 7 : jsDay; // Convert Sunday from 0 to 7

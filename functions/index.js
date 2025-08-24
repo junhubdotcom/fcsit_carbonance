@@ -65,7 +65,6 @@ export const generatePeriodCountersOnly = onDocumentWritten(`${COLLECTIONS.TRIGG
       console.log('🚀 Generating period counters only (no insights)');
       await periodCounters.generateAllPeriodCounters();
 
-      // Reset the flag
       await db.doc(`${COLLECTIONS.TRIGGERS}/generate-period-counters`).update({
         shouldGenerate: false
       });
@@ -97,7 +96,6 @@ export const generateInsightsOnly = onDocumentWritten(`${COLLECTIONS.TRIGGERS}/g
         await insightsGenerator.generateInsightsForAllPeriodCounters();
       }
 
-      // Reset the flag
       await db.doc(`${COLLECTIONS.TRIGGERS}/generate-insights`).update({
         shouldGenerate: false,
         periodCounterId: null
@@ -121,13 +119,9 @@ export const generatePeriodCountersWithInsights = onDocumentWritten(`${COLLECTIO
     if (shouldGenerate) {
       console.log('🚀 Generating period counters with insights');
 
-      // First generate period counters
       await periodCounters.generateAllPeriodCounters();
-
-      // Then generate insights for all
       await insightsGenerator.generateInsightsForAllPeriodCounters();
 
-      // Reset the flag
       await db.doc(`${COLLECTIONS.TRIGGERS}/generate-both`).update({
         shouldGenerate: false
       });
